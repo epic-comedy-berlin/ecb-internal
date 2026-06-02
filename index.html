@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ECB Internal Guides</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;1,9..144,400&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0c0b0a;
+    --bg: #f5f1ea;
+    --paper: #ffffff;
+    --cream: #ece6db;
+    --gold: #b8893f;
+    --gold-soft: #d4ae6f;
+    --red: #b8453a;
+    --green: #4a7c4e;
+    --blue: #3a6e8f;
+    --ink: #1f1c18;
+    --mid: #6b645b;
+    --line: #d6cfc1;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Inter', -apple-system, sans-serif;
+    font-weight: 400;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ========== HEADER ========== */
+  header {
+    background: var(--black);
+    color: var(--bg);
+    padding: 80px 56px 100px;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute;
+    top: -180px; right: -180px;
+    width: 480px; height: 480px;
+    border: 1px solid rgba(184,137,63,0.18);
+    border-radius: 50%;
+  }
+  header::after {
+    content: '';
+    position: absolute;
+    top: -80px; right: -80px;
+    width: 280px; height: 280px;
+    border: 1px solid rgba(184,137,63,0.1);
+    border-radius: 50%;
+  }
+  .header-inner {
+    max-width: 880px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+  .eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 28px;
+  }
+  header h1 {
+    font-family: 'Fraunces', serif;
+    font-weight: 400;
+    font-size: clamp(40px, 6vw, 64px);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    max-width: 720px;
+  }
+  header h1 em { font-style: italic; color: var(--gold-soft); }
+  .header-sub {
+    margin-top: 28px;
+    font-size: 15px;
+    color: rgba(245,241,234,0.55);
+    max-width: 600px;
+    line-height: 1.7;
+  }
+
+  /* ========== MAIN ========== */
+  main {
+    max-width: 880px;
+    margin: -50px auto 0;
+    padding: 0 32px 120px;
+    position: relative;
+  }
+  section {
+    background: var(--paper);
+    margin-bottom: 32px;
+    padding: 48px 56px;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(12,11,10,0.04), 0 12px 40px rgba(12,11,10,0.06);
+  }
+  @media (max-width: 680px) {
+    main { padding: 0 16px 80px; }
+    section { padding: 36px 24px; }
+    header { padding: 60px 24px 90px; }
+  }
+
+  /* ========== ASK-CLAUDE SHORTCUT ========== */
+  .ask {
+    background: var(--black);
+    color: var(--bg);
+    border-radius: 4px;
+    padding: 32px 40px;
+    margin-bottom: 32px;
+    position: relative;
+    overflow: hidden;
+  }
+  .ask::before {
+    content: '';
+    position: absolute;
+    bottom: -120px; left: -60px;
+    width: 320px; height: 320px;
+    border: 1px solid rgba(184,137,63,0.12);
+    border-radius: 50%;
+  }
+  .ask-inner { position: relative; z-index: 1; }
+  .ask-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 14px;
+  }
+  .ask h2 {
+    font-family: 'Fraunces', serif;
+    font-weight: 400;
+    font-size: 26px;
+    line-height: 1.25;
+    color: var(--bg);
+    margin-bottom: 14px;
+    max-width: 640px;
+  }
+  .ask h2 em { font-style: italic; color: var(--gold-soft); }
+  .ask p {
+    font-size: 15px;
+    color: rgba(245,241,234,0.7);
+    max-width: 640px;
+    margin: 0;
+  }
+
+  /* ========== INTRO ========== */
+  .intro h2 {
+    font-family: 'Fraunces', serif;
+    font-weight: 400;
+    font-size: 30px;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    margin-bottom: 20px;
+    color: var(--black);
+  }
+  .intro h2 em { font-style: italic; color: var(--gold); }
+  .intro p {
+    font-size: 16px;
+    color: var(--ink);
+    margin-bottom: 16px;
+    max-width: 64ch;
+  }
+  .start-row {
+    margin-top: 24px;
+    padding: 16px 22px;
+    background: rgba(184,137,63,0.08);
+    border-left: 2px solid var(--gold);
+    font-size: 14.5px;
+    color: var(--ink);
+  }
+  .start-row strong { color: var(--gold); font-weight: 600; }
+  .start-row a { color: var(--blue); font-weight: 500; text-decoration: none; }
+  .start-row a:hover { text-decoration: underline; }
+
+  /* ========== GROUP CLUSTER ========== */
+  .cluster-head {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    margin-bottom: 6px;
+  }
+  .cluster-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--gold);
+    font-weight: 500;
+  }
+  .cluster-head h2 {
+    font-family: 'Fraunces', serif;
+    font-weight: 400;
+    font-size: 28px;
+    line-height: 1.2;
+    color: var(--black);
+  }
+  .cluster-head h2 em { font-style: italic; color: var(--gold); }
+  .cluster-sub {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--mid);
+    margin-bottom: 26px;
+  }
+
+  /* ========== GUIDE CARDS ========== */
+  .cards { display: flex; flex-direction: column; gap: 14px; }
+  .card {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 22px 26px;
+    transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+    position: relative;
+  }
+  .card:hover {
+    border-color: var(--gold);
+    box-shadow: 0 6px 20px rgba(12,11,10,0.07);
+    transform: translateY(-1px);
+  }
+  .card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 8px;
+  }
+  .card-name {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 19px;
+    color: var(--black);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .card-arrow {
+    color: var(--gold);
+    font-size: 18px;
+    opacity: 0;
+    transform: translateX(-4px);
+    transition: opacity 0.15s, transform 0.15s;
+  }
+  .card:hover .card-arrow { opacity: 1; transform: translateX(0); }
+  .card-desc {
+    font-size: 14.5px;
+    color: var(--mid);
+    max-width: 60ch;
+  }
+  .role-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 3px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .tag-everyone { background: rgba(74,124,78,0.12); color: var(--green); }
+  .tag-leads    { background: rgba(58,110,143,0.12); color: var(--blue); }
+  .tag-aaron    { background: rgba(184,69,58,0.1); color: var(--red); }
+
+  /* ========== FOOTER ========== */
+  footer {
+    background: var(--black);
+    color: rgba(245,241,234,0.4);
+    padding: 36px 56px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.05em;
+  }
+  .footer-inner {
+    max-width: 880px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  footer .accent { color: var(--gold); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="eyebrow">Epic Comedy Berlin · Internal Guides</div>
+    <h1>The ECB <em>internal guides</em></h1>
+    <p class="header-sub">Everything you need to run ECB's systems — how to work with Claude, how meetings flow, and how the project files stay current. Pick a guide below, or just ask Claude directly.</p>
+  </div>
+</header>
+
+<main>
+
+  <!-- ASK-CLAUDE SHORTCUT -->
+  <div class="ask">
+    <div class="ask-inner">
+      <div class="ask-label">Quickest route</div>
+      <h2>Don't want to read a whole guide? <em>Just ask Claude.</em></h2>
+      <p>If you only need one specific thing — how to flag heavy work, where the MIR gets posted, how to switch models — open a chat in the ECB project and ask. Claude can pull the exact answer from any of these guides without you reading the whole thing. The guides below are here for when you want the full picture.</p>
+    </div>
+  </div>
+
+  <!-- INTRO -->
+  <section class="intro">
+    <h2>What <em>this is</em></h2>
+    <p>A set of short how-to guides for the ECB team, covering the tools and routines that keep the company running day to day. Each one is self-contained: open the one you need, when you need it.</p>
+    <p>You don't have to read them in order, and you don't have to read them all. Most people only ever need the first group.</p>
+    <div class="start-row">
+      <strong>New here?</strong> Start with the <a href="https://epic-comedy-berlin.github.io/ecb-internal/claude-general-guide.html">General guide</a> and the <a href="https://epic-comedy-berlin.github.io/ecb-internal/slack-guide.html">Slack guide</a> — they cover the two things you'll use every day.
+    </div>
+  </section>
+
+  <!-- CLUSTER 1: START HERE -->
+  <section>
+    <div class="cluster-head">
+      <span class="cluster-num">01</span>
+      <h2>Start <em>here</em></h2>
+    </div>
+    <div class="cluster-sub">Using Claude &amp; Slack — the everyday basics</div>
+    <div class="cards">
+
+      <a class="card" href="https://epic-comedy-berlin.github.io/ecb-internal/claude-general-guide.html">
+        <div class="card-top">
+          <span class="card-name">General Guide <span class="card-arrow">&rarr;</span></span>
+          <span class="role-tag tag-everyone">Everyone</span>
+        </div>
+        <div class="card-desc">How Claude works at ECB — what it reads, how it responds, the models, and what to do when something looks wrong. Read this first.</div>
+      </a>
+
+      <a class="card" href="https://epic-comedy-berlin.github.io/ecb-internal/claude-task-guide.html">
+        <div class="card-top">
+          <span class="card-name">Task Guide <span class="card-arrow">&rarr;</span></span>
+          <span class="role-tag tag-everyone">Everyone</span>
+        </div>
+        <div class="card-desc">The day-to-day workflow: from picking a task to getting a finished result and posting the handoff. The seven steps you'll follow most often.</div>
+      </a>
+
+      <a class="card" href="https://epic-comedy-berlin.github.io/ecb-internal/claude-token-guide.html">
+        <div class="card-top">
+          <span class="card-name">Shared Account Guide <span class="card-arrow">&rarr;</span></span>
+          <span class="role-tag tag-everyone">Everyone</span>
+        </div>
+        <div class="card-desc">We share one account. How to keep connectors off, check the usage window, pick the right model, and not lock everyone else out.</div>
+      </a>
+
+      <a class="card" href="https://epic-comedy-berlin.github.io/ecb-internal/slack-guide.html">
+        <div class="card-top">
+          <span class="card-name">Slack Guide <span class="card-arrow">&rarr;</span></span>
+          <span class="role-tag tag-everyone">Everyone</span>
+        </div>
+        <div class="card-desc">Where team communication happens — the channels, what goes where, and the posting discipline that keeps it usable. Core to everything else.</div>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- CLUSTER 2: MEETINGS -->
+  <section>
+    <div class="cluster-head">
+      <span class="cluster-num">02</span>
+      <h2><em>Meetings</em></h2>
+    </div>
+    <div class="cluster-sub">Capturing and running ECB's meeting cycle</div>
+    <div class="cards">
+
+      <a class="card" href="https://epic-comedy-berlin.github.io/ecb-internal/meeting-agendas-guide.html">
+        <div class="card-top">
+          <span class="card-name">Meeting Agendas Guide <span class="card-arrow">&rarr;</span></span>
+          <span class="role-tag tag-leads">Meeting leads</span>
+        </div>
+        <div class="card-desc">ECB's meeting rhythm and how to generate an agenda for each type, then get it into Slack before the session starts.</div>
+      </a>
+
+      <a class="card" href="https://epic-comedy-berlin.github.io/ecb-internal/mir-guide.html">
+        <div class="card-top">
+          <span class="card-name">MIR Guide <span class="card-arrow">&rarr;</span></span>
+          <span class="role-tag tag-leads">Meeting leads</span>
+        </div>
+        <div class="card-desc">The Meeting Intelligence Report — the structured summary produced after every meeting that records decisions and tasks, and feeds the project files.</div>
+      </a>
+
+      <a class="card" href="https://epic-comedy-berlin.github.io/ecb-internal/fireflies-guide.html">
+        <div class="card-top">
+          <span class="card-name">Fireflies Guide <span class="card-arrow">&rarr;</span></span>
+          <span class="role-tag tag-everyone">Everyone</span>
+        </div>
+        <div class="card-desc">Making sure meetings get captured — when the notetaker joins automatically, what to do when it doesn't, and how long sessions get handled.</div>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- CLUSTER 3: THE SYSTEM -->
+  <section>
+    <div class="cluster-head">
+      <span class="cluster-num">03</span>
+      <h2>The <em>system</em></h2>
+    </div>
+    <div class="cluster-sub">File maintenance — mostly Aaron's domain, here for reference</div>
+    <div class="cards">
+
+      <a class="card" href="https://epic-comedy-berlin.github.io/ecb-internal/log-tracker-guide.html">
+        <div class="card-top">
+          <span class="card-name">Log Update Guide <span class="card-arrow">&rarr;</span></span>
+          <span class="role-tag tag-aaron">Mostly Aaron</span>
+        </div>
+        <div class="card-desc">How the project files get kept current — scanning meetings, Slack, and chats to rebuild Active State and the Decision Archive. Run after meetings and whenever the files fall behind.</div>
+      </a>
+
+      <a class="card" href="https://epic-comedy-berlin.github.io/ecb-internal/master-context-guide.html">
+        <div class="card-top">
+          <span class="card-name">Master Context Guide <span class="card-arrow">&rarr;</span></span>
+          <span class="role-tag tag-aaron">Mostly Aaron</span>
+        </div>
+        <div class="card-desc">Maintaining the slow-moving facts about ECB — what counts as foundational vs. operational, and how those facts get updated after the monthly review.</div>
+      </a>
+
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <div>Epic Comedy Berlin · Internal use only · Guides home</div>
+    <div>Updated <span class="accent">June 2026</span></div>
+  </div>
+</footer>
+
+</body>
+</html>
