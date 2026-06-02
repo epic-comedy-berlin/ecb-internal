@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ECB Master Context Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;1,9..144,400&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0c0b0a;
+    --bg: #f5f1ea;
+    --paper: #ffffff;
+    --cream: #ece6db;
+    --gold: #b8893f;
+    --gold-soft: #d4ae6f;
+    --red: #b8453a;
+    --green: #4a7c4e;
+    --blue: #3a6e8f;
+    --ink: #1f1c18;
+    --mid: #6b645b;
+    --line: #d6cfc1;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Inter', -apple-system, sans-serif;
+    font-weight: 400;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  header {
+    background: var(--black);
+    color: var(--bg);
+    padding: 80px 56px 100px;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute;
+    top: -180px; right: -180px;
+    width: 480px; height: 480px;
+    border: 1px solid rgba(184,137,63,0.18);
+    border-radius: 50%;
+  }
+  header::after {
+    content: '';
+    position: absolute;
+    top: -80px; right: -80px;
+    width: 280px; height: 280px;
+    border: 1px solid rgba(184,137,63,0.1);
+    border-radius: 50%;
+  }
+  .header-inner { max-width: 880px; margin: 0 auto; position: relative; z-index: 1; }
+  .eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 28px;
+  }
+  header h1 {
+    font-family: 'Fraunces', serif;
+    font-weight: 400;
+    font-size: clamp(40px, 6vw, 64px);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    max-width: 720px;
+  }
+  header h1 em { font-style: italic; color: var(--gold-soft); }
+  .header-sub {
+    margin-top: 28px;
+    font-size: 15px;
+    color: rgba(245,241,234,0.55);
+    max-width: 580px;
+    line-height: 1.7;
+  }
+  .header-pointer {
+    margin-top: 32px;
+    padding: 16px 22px;
+    background: rgba(184,137,63,0.08);
+    border-left: 2px solid var(--gold);
+    color: rgba(245,241,234,0.85);
+    font-size: 14px;
+    max-width: 680px;
+  }
+  .header-pointer strong { color: var(--gold-soft); font-weight: 500; }
+
+  main { max-width: 880px; margin: -50px auto 0; padding: 0 32px 120px; position: relative; }
+  section {
+    background: var(--paper);
+    margin-bottom: 32px;
+    padding: 56px 64px;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(12,11,10,0.04), 0 12px 40px rgba(12,11,10,0.06);
+  }
+  @media (max-width: 680px) {
+    main { padding: 0 16px 80px; }
+    section { padding: 40px 28px; }
+    header { padding: 60px 24px 90px; }
+  }
+  h2 {
+    font-family: 'Fraunces', serif;
+    font-weight: 400;
+    font-size: 32px;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    margin-bottom: 28px;
+    color: var(--black);
+  }
+  h2 em { font-style: italic; color: var(--gold); }
+  h3 {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 20px;
+    margin-bottom: 12px;
+    color: var(--black);
+  }
+  p { font-size: 16px; color: var(--ink); margin-bottom: 18px; max-width: 64ch; }
+  p.lead { font-size: 18px; line-height: 1.6; }
+  strong { font-weight: 600; color: var(--black); }
+  code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    background: var(--cream);
+    padding: 2px 7px;
+    border-radius: 3px;
+    color: var(--ink);
+  }
+
+  .callout {
+    background: var(--cream);
+    border-left: 3px solid var(--gold);
+    padding: 22px 28px;
+    border-radius: 0 4px 4px 0;
+    margin: 24px 0;
+  }
+  .callout.warning { background: #faf0ec; border-left-color: var(--red); }
+  .callout.info    { background: #eef2ec; border-left-color: var(--green); }
+  .callout.tip     { background: #ecf1f5; border-left-color: var(--blue); }
+  .callout-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    line-height: 1.3;
+  }
+  .callout.warning .callout-label { color: var(--red); }
+  .callout.info    .callout-label { color: var(--green); }
+  .callout.tip     .callout-label { color: var(--blue); }
+  .callout p { margin-bottom: 10px; font-size: 15px; line-height: 1.65; max-width: none; }
+  .callout p:last-child { margin-bottom: 0; }
+
+  .starthere {
+    background: #ecf1f5;
+    border: 1px solid #cdddea;
+    border-radius: 6px;
+    padding: 18px 24px;
+    margin: 0 0 8px;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+  .starthere .sh-icon { font-size: 18px; line-height: 1.5; }
+  .starthere p { margin: 0; font-size: 14.5px; color: var(--ink); max-width: none; }
+  .starthere strong { color: var(--blue); }
+
+  /* TABLE OF CONTENTS */
+  .toc {
+    margin: 28px 0 4px;
+    background: var(--cream);
+    border-radius: 6px;
+    padding: 22px 26px;
+  }
+  .toc-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 16px;
+  }
+  .toc-links {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: repeat(3, auto);
+    grid-auto-flow: column;
+    gap: 2px 28px;
+  }
+  @media (max-width: 680px) { .toc-links { grid-template-columns: 1fr; grid-template-rows: none; grid-auto-flow: row; } }
+  .toc-links a {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    font-size: 15px;
+    color: var(--ink);
+    text-decoration: none;
+    padding: 9px 10px 9px 0;
+    border-bottom: 1px solid rgba(184,137,63,0.15);
+    transition: color 0.15s, padding-left 0.15s;
+  }
+  .toc-links a:hover { color: var(--gold); padding-left: 6px; }
+  .toc-links a .toc-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--gold);
+    flex-shrink: 0;
+    min-width: 18px;
+  }
+  .toc-links a .toc-arrow {
+    margin-left: auto;
+    color: var(--gold-soft);
+    font-size: 13px;
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+  .toc-links a:hover .toc-arrow { opacity: 1; }
+
+  /* THREE-FILE STRIP */
+  .threefile {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin: 24px 0 8px;
+  }
+  @media (max-width: 680px) { .threefile { grid-template-columns: 1fr; } }
+  .tf-card {
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 16px 18px;
+    background: var(--paper);
+  }
+  .tf-card.this { border-color: var(--gold); background: #fdfaf4; }
+  .tf-name {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--gold);
+    margin-bottom: 6px;
+  }
+  .tf-tag {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--mid);
+    margin-bottom: 8px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .tf-desc { font-size: 13px; color: var(--mid); line-height: 1.5; }
+
+  /* QUALIFIES / DOESN'T TWO-COLUMN */
+  .qual-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 22px 0 8px;
+  }
+  @media (max-width: 680px) { .qual-grid { grid-template-columns: 1fr; } }
+  .qual-col {
+    border-radius: 8px;
+    padding: 20px 22px;
+  }
+  .qual-col.yes { background: #eef2ec; border: 1px solid #cdddc8; }
+  .qual-col.no  { background: #faf0ec; border: 1px solid #e8cfc7; }
+  .qual-head {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .qual-col.yes .qual-head { color: var(--green); }
+  .qual-col.no  .qual-head { color: var(--red); }
+  .qual-col ul { list-style: none; }
+  .qual-col li {
+    font-size: 13.5px;
+    color: var(--ink);
+    padding: 5px 0 5px 18px;
+    position: relative;
+    line-height: 1.45;
+  }
+  .qual-col.yes li::before { content: '✓'; position: absolute; left: 0; color: var(--green); font-size: 12px; }
+  .qual-col.no  li::before { content: '✕'; position: absolute; left: 0; color: var(--red); font-size: 12px; }
+
+  /* FLOW */
+  .flow {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0;
+    margin: 28px 0 12px;
+  }
+  @media (max-width: 760px) { .flow { grid-template-columns: 1fr; gap: 8px; } }
+  .flow-step {
+    background: var(--cream);
+    padding: 18px 10px;
+    text-align: center;
+    position: relative;
+    border-radius: 3px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 108px;
+  }
+  .flow-step:not(:last-child)::after {
+    content: '\2192';
+    position: absolute;
+    right: -9px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--gold);
+    font-size: 15px;
+    font-weight: 500;
+    background: var(--paper);
+    padding: 0 3px;
+    z-index: 2;
+  }
+  @media (max-width: 760px) {
+    .flow-step:not(:last-child)::after { content: '\2193'; right: 50%; top: auto; bottom: -16px; transform: translateX(50%); }
+  }
+  .flow-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    color: var(--gold);
+    margin-bottom: 8px;
+    letter-spacing: 0.1em;
+  }
+  .flow-label { font-size: 12.5px; font-weight: 500; color: var(--ink); line-height: 1.35; }
+  .flow-sub { font-size: 11px; color: var(--mid); margin-top: 4px; line-height: 1.35; }
+  .flow-step.confirm { background: #ecf1f5; }
+
+  /* STEP BLOCKS */
+  .step-block {
+    background: var(--cream);
+    padding: 22px 26px;
+    border-radius: 4px;
+    margin: 16px 0;
+    display: grid;
+    grid-template-columns: 36px 1fr;
+    gap: 18px;
+    align-items: start;
+  }
+  .step-num {
+    font-family: 'Fraunces', serif;
+    font-size: 26px;
+    color: var(--gold);
+    line-height: 1;
+    margin-top: -2px;
+  }
+  .step-content h3 { margin-bottom: 6px; font-size: 17px; }
+  .step-content p { font-size: 14px; color: var(--mid); margin: 0 0 10px; line-height: 1.6; max-width: none; }
+  .step-content p:last-child { margin-bottom: 0; }
+  .step-content strong { color: var(--ink); }
+
+  /* TRIGGER LIST */
+  .trigger-list {
+    background: #1a1814;
+    border-radius: 6px;
+    padding: 16px 20px;
+    margin: 18px 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--gold-soft);
+    line-height: 2;
+  }
+  .trigger-list .tl-label {
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(245,241,234,0.4);
+    margin-bottom: 8px;
+  }
+
+  /* PROPOSAL MOCKUP */
+  .prop-mock {
+    background: #fbfaf7;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    overflow: hidden;
+    margin: 16px 0;
+  }
+  .prop-head {
+    background: #1a1814;
+    color: var(--gold-soft);
+    padding: 11px 18px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.04em;
+  }
+  .prop-body { padding: 16px 20px; }
+  .prop-sec-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--gold);
+    margin: 10px 0 6px;
+    font-weight: 700;
+  }
+  .prop-sec-label:first-child { margin-top: 0; }
+  .prop-row {
+    font-size: 13px;
+    color: var(--ink);
+    padding: 5px 0;
+    line-height: 1.5;
+    border-bottom: 1px solid var(--cream);
+  }
+  .prop-row:last-of-type { border-bottom: none; }
+  .prop-type {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    padding: 1px 6px;
+    border-radius: 3px;
+    margin-right: 8px;
+  }
+  .prop-type.change { background: #ecf1f5; color: var(--blue); }
+  .prop-type.new { background: #eef2ec; color: var(--green); }
+  .prop-type.remove { background: #faf0ec; color: var(--red); }
+  .prop-type.retire { background: #f0ece4; color: var(--mid); }
+  .prop-type.cand { background: #f4efe3; color: var(--gold); }
+  .prop-confirm {
+    margin-top: 14px; padding-top: 12px;
+    border-top: 1px solid var(--cream);
+    font-size: 12.5px; color: var(--mid); font-style: italic;
+  }
+
+  footer {
+    background: var(--black);
+    color: rgba(245,241,234,0.4);
+    padding: 36px 56px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.05em;
+  }
+  .footer-inner {
+    max-width: 880px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .accent { color: var(--gold); }
+
+  .nav-back { max-width: 880px; margin: 0 auto; padding: 24px 32px 0; }
+  .nav-back a {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold);
+    text-decoration: none;
+    opacity: 0.7;
+    transition: opacity 0.15s;
+  }
+  .nav-back a:hover { opacity: 1; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="eyebrow">Epic Comedy Berlin · Internal Guides</div>
+    <h1>The <em>Master Context</em></h1>
+    <p class="header-sub">What the Master Context file is, why it should change rarely, and how to update it without breaking the one thing that makes it useful — its stability.</p>
+    <div class="header-pointer">
+      <strong>What this is:</strong> Master Context is ECB's foundation file — what the company fundamentally <em>is</em>. It changes only on genuine structural shifts, not day-to-day activity. Most months, the right outcome is "nothing to change."
+    </div>
+  </div>
+</header>
+
+<div class="nav-back">
+  <a href="https://epic-comedy-berlin.github.io/ecb-internal/">← Back to all guides</a>
+</div>
+
+<main>
+
+  <!-- ───────── START HERE ───────── -->
+  <section>
+    <div class="starthere">
+      <span class="sh-icon">👋</span>
+      <p><strong>First time?</strong> Read this through, starting with <a href="#what" style="color:var(--blue);">What Master Context is</a> — and pay attention to <a href="#filter" style="color:var(--blue);">the filter</a>, which is the whole skill of this one. <strong>This is Aaron's job</strong>, run about once a month. If you're not Aaron, you likely won't need it.</p>
+    </div>
+
+    <div class="toc">
+      <div class="toc-label">On this page</div>
+      <div class="toc-links">
+        <a href="#what"><span class="toc-num">01</span>What Master Context is<span class="toc-arrow">→</span></a>
+        <a href="#filter"><span class="toc-num">02</span>The filter — what belongs<span class="toc-arrow">→</span></a>
+        <a href="#when"><span class="toc-num">03</span>When it runs<span class="toc-arrow">→</span></a>
+        <a href="#how"><span class="toc-num">04</span>How to run one<span class="toc-arrow">→</span></a>
+        <a href="#nochanges"><span class="toc-num">05</span>The usual outcome<span class="toc-arrow">→</span></a>
+        <a href="#troubleshooting"><span class="toc-num">06</span>Troubleshooting<span class="toc-arrow">→</span></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────── WHAT IT IS ───────── -->
+  <section id="what">
+    <h2>What Master Context <em>is</em></h2>
+    <p class="lead">Master Context is the file that holds ECB's foundational facts — what the company fundamentally is. It covers the shows, the team and who does what, the brand and tone rules, the venues, the strategic targets, the hard constraints, and the core principles.</p>
+    <p>It's the slowest-moving of ECB's three project files. Where Active State changes constantly and the Decision Archive grows after every meeting, Master Context is meant to sit still — it only changes when something structural about the company actually shifts. That stability is the point: it's the steady reference everything else is measured against.</p>
+
+    <div class="threefile">
+      <div class="tf-card">
+        <div class="tf-name">ECB_Active_State</div>
+        <div class="tf-tag">What's happening now</div>
+        <div class="tf-desc">Open tasks, risks, live decisions. Changes constantly — updated after every meeting.</div>
+      </div>
+      <div class="tf-card">
+        <div class="tf-name">ECB_Decision_Archive</div>
+        <div class="tf-tag">Why things changed</div>
+        <div class="tf-desc">Permanent record of every decision. Grows after every meeting. Append-only.</div>
+      </div>
+      <div class="tf-card this">
+        <div class="tf-name">ECB_Master_Context</div>
+        <div class="tf-tag">What ECB is · this guide</div>
+        <div class="tf-desc">Foundational facts. Changes rarely — only on genuine structural shifts.</div>
+      </div>
+    </div>
+
+    <div class="callout warning">
+      <div class="callout-label">The cardinal rule: bias toward not changing it</div>
+      <p>The value of Master Context comes from being stable. If it gets updated with every operational detail, it stops being a reliable foundation and becomes just another task log. So the default answer to "does this belong in Master Context?" is <strong>no</strong> — and most months, an update finds nothing to change at all. That's the system working correctly, not a failure.</p>
+    </div>
+  </section>
+
+  <!-- ───────── THE FILTER ───────── -->
+  <section id="filter">
+    <h2>The filter — <em>what belongs</em></h2>
+    <p class="lead">This is the whole skill of a Master Context update: telling a foundational change apart from ordinary activity. Almost everything that happens in a month is activity, and belongs in the other two files — not here.</p>
+    <p>The test for any candidate change: <strong>does it alter a durable fact about what ECB is?</strong> Not "did something happen" — things happen constantly — but "has the foundation actually shifted."</p>
+
+    <div class="qual-grid">
+      <div class="qual-col yes">
+        <div class="qual-head">Belongs in Master Context</div>
+        <ul>
+          <li>A venue permanently added, changed, or ended</li>
+          <li>A show permanently added, ended, or fundamentally reformatted</li>
+          <li>A team role or responsibility change</li>
+          <li>A platform migration that is <em>complete</em> (not in progress)</li>
+          <li>A strategic target or six-month goal change</li>
+          <li>A brand position, tone rule, or tagline change</li>
+          <li>A hard constraint added, removed, or changed</li>
+          <li>A confirmed answer to a long-standing open question</li>
+        </ul>
+      </div>
+      <div class="qual-col no">
+        <div class="qual-head">Stays in the other files</div>
+        <ul>
+          <li>Task status, progress, or completion</li>
+          <li>Deadlines and scheduling</li>
+          <li>Anything "in progress" or "being worked on"</li>
+          <li>Risks and blockers (unless they become permanent facts)</li>
+          <li>Operational decisions that don't change what ECB is</li>
+          <li>Meeting outcomes that don't shift a foundational fact</li>
+          <li>Decisions still under discussion</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="callout tip">
+      <div class="callout-label">The tie-breaker</div>
+      <p>If you're genuinely unsure whether something is foundational or just operational, <strong>leave it out</strong> — but flag it in the proposal as a "candidate" so the decision is made on purpose rather than by omission. The "in progress vs complete" line catches most of it: a platform migration being worked on is operational; the same migration once <em>finished</em> is a foundational fact. Same event, different stage, different file.</p>
+    </div>
+
+    <div class="callout info">
+      <div class="callout-label">What happens to facts that are no longer current</div>
+      <p>When something stops being true — you exit a venue, retire a show format, end a partnership — it doesn't just silently vanish. There are two outcomes, and the difference matters:</p>
+      <p><strong>Retired to "Past Assets."</strong> If the old thing has reuse or reference value — a show format you might revive, a venue relationship worth remembering — it moves to a clearly-marked <strong>Past Assets</strong> section at the bottom of the file, kept for context rather than deleted. The current sections stay lean and accurate; the knowledge isn't lost.</p>
+      <p><strong>Removed entirely.</strong> If it has no current truth and no real reference value, it's removed — and the Decision Archive still holds the decision trail for why. So nothing important is ever truly lost: it's either current, retired for reference, or recorded in the Archive.</p>
+    </div>
+  </section>
+
+  <!-- ───────── WHEN IT RUNS ───────── -->
+  <section id="when">
+    <h2>When it <em>runs</em></h2>
+    <p class="lead">About once a month — specifically after the <strong>monthly review meeting</strong> (which replaces the last Thursday work session of the month) — and always after that meeting's log update, never before.</p>
+    <p>The order matters because of where the changes come from. A Master Context update doesn't scan meetings or Slack — it reads the <strong>Decision Archive</strong> (the permanent record of decisions) to find what has genuinely changed. That archive only gets current when a log update runs. So if a meeting just happened and hasn't been logged yet, the log update has to run first, otherwise the Master Context update is reading from stale information.</p>
+
+    <div class="callout">
+      <div class="callout-label">The order, plainly</div>
+      <p>Log update first (so the Decision Archive is current) → <em>then</em> Master Context update (which reads that archive). If you're not sure the archive is up to date, run a log update first, or ask. <em>The <a href="https://epic-comedy-berlin.github.io/ecb-internal/log-tracker-guide.html" style="color:var(--blue);">Log Update guide</a> covers that step.</em></p>
+    </div>
+
+    <div class="callout info">
+      <div class="callout-label">No connectors needed</div>
+      <p>Unlike the log update, a Master Context update reads only the project files — it doesn't touch Fireflies or Slack. So <strong>all connectors should be off</strong> for this one. Nothing to toggle on.</p>
+    </div>
+  </section>
+
+  <!-- ───────── HOW TO RUN ───────── -->
+  <section id="how">
+    <h2>How to <em>run one</em></h2>
+    <p class="lead">Aaron's job, run monthly. Trigger it, read the change proposal, confirm what's genuinely foundational, then upload the file — if anything changed at all.</p>
+
+    <div class="callout info">
+      <div class="callout-label">Whose job this is</div>
+      <p>This is <strong>Aaron's</strong> — he maintains the project files. It's run about once a month, right after the end-of-month monthly review meeting (and its log update). There's no fallback path worth documenting here the way there is for the log update; if it needs doing and Aaron's away, it can almost always wait, because Master Context rarely needs changing.</p>
+    </div>
+
+    <div class="flow">
+      <div class="flow-step">
+        <div class="flow-num">STEP 1</div>
+        <div class="flow-label">Log update first</div>
+        <div class="flow-sub">Archive must be current</div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">STEP 2</div>
+        <div class="flow-label">Trigger it</div>
+        <div class="flow-sub">New chat, connectors off</div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">STEP 3</div>
+        <div class="flow-label">Read the proposal</div>
+        <div class="flow-sub">If anything qualifies</div>
+      </div>
+      <div class="flow-step confirm">
+        <div class="flow-num">STEP 4</div>
+        <div class="flow-label">Confirm</div>
+        <div class="flow-sub">What's truly foundational</div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">STEP 5</div>
+        <div class="flow-label">Swap the file</div>
+        <div class="flow-sub">Delete old, then upload</div>
+      </div>
+    </div>
+
+    <div class="step-block">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <h3>Make sure the log update ran first</h3>
+        <p>The update reads the <strong>Decision Archive</strong> (its primary source for what's changed) and cross-checks <strong>Active State</strong> for any operational fact that has now become permanent — so both need to be current. They're current once the latest meeting has been logged. If the log update has run since the last meeting, you're good; if not, run it first. <em>See the <a href="https://epic-comedy-berlin.github.io/ecb-internal/log-tracker-guide.html" style="color:var(--blue);">Log Update guide</a>.</em></p>
+      </div>
+    </div>
+
+    <div class="step-block">
+      <div class="step-num">2</div>
+      <div class="step-content">
+        <h3>Open a new chat and trigger it</h3>
+        <p>Start a fresh chat in the ECB project, with <strong>all connectors off</strong> (this update reads project files only). Then type any of these to start it: <code>update master context</code>, <code>update the master context</code>, or <code>master context update</code>. Claude reads the current Master Context, then the Decision Archive since the last Master Context update, applying the filter to everything it finds. Sonnet is fine.</p>
+      </div>
+    </div>
+
+    <div class="step-block">
+      <div class="step-num">3</div>
+      <div class="step-content">
+        <h3>Read the change proposal</h3>
+        <p>If Claude finds anything foundational, it presents a proposal — grouped by section, each row labelled <strong>CHANGE</strong>, <strong>NEW</strong>, <strong>REMOVE</strong>, or <strong>RETIRE</strong> (moved to Past Assets rather than deleted), and every row traced to a dated decision in the archive. Anything borderline is flagged as a "candidate" for you to rule in or out. It looks roughly like this:</p>
+
+        <div class="prop-mock">
+          <div class="prop-head">Master Context update proposal</div>
+          <div class="prop-body">
+            <div class="prop-sec-label">§2 Venues</div>
+            <div class="prop-row"><span class="prop-type change">CHANGE</span>A venue's details have changed — updated in place. Source: decision [date].</div>
+            <div class="prop-sec-label">§5 Infrastructure</div>
+            <div class="prop-row"><span class="prop-type new">NEW</span>A tool migration that's now complete becomes a foundational fact. Source: decision [date].</div>
+            <div class="prop-row"><span class="prop-type remove">REMOVE</span>An old infrastructure line that's no longer true after that migration. Source: decision [date].</div>
+            <div class="prop-sec-label">§3 Shows</div>
+            <div class="prop-row"><span class="prop-type retire">RETIRE</span>A show format that ended but may be revived → Past Assets. Source: decision [date].</div>
+            <div class="prop-sec-label">Candidates — confirm if foundational</div>
+            <div class="prop-row"><span class="prop-type cand">CANDIDATE</span>A borderline item — foundational fact, or just an operational detail? You decide.</div>
+            <div class="prop-confirm">Confirm all, confirm a subset, or flag corrections. Nothing is written until you confirm.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step-block">
+      <div class="step-num">4</div>
+      <div class="step-content">
+        <h3>Confirm what's genuinely foundational</h3>
+        <p>This is your judgement call. Confirm the changes that truly belong, reject anything that's really operational, and rule on the candidates. <strong>If a proposed change isn't quite accurate — wrong wording, a detail off, missing nuance — correct it before confirming</strong> rather than waving it through; what you confirm is what gets written. Claude <strong>waits for your okay</strong> and applies only what you confirm, editing those specific facts and leaving the rest of the file exactly as it was.</p>
+      </div>
+    </div>
+
+    <div class="step-block">
+      <div class="step-num">5</div>
+      <div class="step-content">
+        <h3>Swap the file — delete the old, then upload the new</h3>
+        <p>If changes were confirmed, Claude produces an updated <code>ECB_Master_Context</code> file. Swap it into the project the same way as any project file: in the <strong>Files</strong> panel (right side of the ECB Company Work project), <strong>delete the old Master Context first</strong>, then upload the new one — so exactly one remains. <em>The <a href="https://epic-comedy-berlin.github.io/ecb-internal/log-tracker-guide.html" style="color:var(--blue);">Log Update guide</a> shows the Files panel and the delete-then-upload routine in detail.</em></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────── NO CHANGES ───────── -->
+  <section id="nochanges">
+    <h2>The usual outcome: <em>nothing changes</em></h2>
+    <p class="lead">Most months, a Master Context update finds nothing foundational and produces no new file. This is expected — it's the system working as designed.</p>
+    <p>When that happens, Claude won't generate a file for the sake of it. It reports that the Decision Archive since the last update was reviewed, everything in it was operational, and Master Context is unchanged — nothing to upload. A new version of the file should be a genuinely rare event.</p>
+
+    <div class="callout tip">
+      <div class="callout-label">If every month produces changes, something's off</div>
+      <p>If Master Context is changing every single month, that's a sign the filter is being applied too loosely — operational detail is leaking into the foundation file. When in doubt, the answer is "leave it out." A foundation that shifts constantly isn't a foundation.</p>
+    </div>
+  </section>
+
+  <!-- ───────── TROUBLESHOOTING ───────── -->
+  <section id="troubleshooting">
+    <h2>If something <em>goes wrong</em></h2>
+
+    <div class="callout warning">
+      <div class="callout-label">Claude can't read one of the files</div>
+      <p>A Master Context update needs three files: the current Master Context, the Decision Archive, and Active State. If Claude can't retrieve one, it stops rather than working from memory. Usually this means a file is missing or duplicated in the project — check the Files panel has exactly one of each, then try again. <em>The <a href="https://epic-comedy-berlin.github.io/ecb-internal/log-tracker-guide.html" style="color:var(--blue);">Log Update guide</a> shows where the Files panel is.</em></p>
+    </div>
+
+    <div class="callout warning">
+      <div class="callout-label">The proposal includes something operational</div>
+      <p>If a proposed change is really just task progress or an in-progress item dressed up as a foundational fact, reject it. Tell Claude it's operational and belongs in Active State, not Master Context. The filter isn't perfect — your judgement on what's genuinely foundational is the final call.</p>
+    </div>
+
+    <div class="callout warning">
+      <div class="callout-label">You're not sure the Decision Archive is current</div>
+      <p>If a meeting happened recently and you're not certain it's been logged, the archive may be missing the latest decisions — which means the Master Context update could miss a real change. When unsure, run a log update first, then come back to this. <em>See the <a href="https://epic-comedy-berlin.github.io/ecb-internal/log-tracker-guide.html" style="color:var(--blue);">Log Update guide</a>.</em></p>
+    </div>
+  </section>
+
+  <!-- ───────── QUESTIONS ───────── -->
+  <section>
+    <h2>Questions?</h2>
+    <p>Master Context is Aaron's area — ask him in <strong>#p1-important</strong>. Related: the <a href="https://epic-comedy-berlin.github.io/ecb-internal/log-tracker-guide.html" style="color:var(--blue);">Log Update guide</a> for the step that comes first and feeds this one, and the <a href="https://epic-comedy-berlin.github.io/ecb-internal/meeting-agendas-guide.html" style="color:var(--blue);">Meeting Agendas guide</a> for the monthly review this usually follows.</p>
+  </section>
+
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <div>Epic Comedy Berlin · Internal use only · Master Context Guide</div>
+    <div>Updated <span class="accent">June 2026</span></div>
+  </div>
+</footer>
+
+</body>
+</html>

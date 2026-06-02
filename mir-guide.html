@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ECB MIR Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;1,9..144,400&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0c0b0a;
+    --bg: #f5f1ea;
+    --paper: #ffffff;
+    --cream: #ece6db;
+    --gold: #b8893f;
+    --gold-soft: #d4ae6f;
+    --red: #b8453a;
+    --green: #4a7c4e;
+    --blue: #3a6e8f;
+    --ink: #1f1c18;
+    --mid: #6b645b;
+    --line: #d6cfc1;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Inter', -apple-system, sans-serif;
+    font-weight: 400;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  header {
+    background: var(--black);
+    color: var(--bg);
+    padding: 80px 56px 100px;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute;
+    top: -180px; right: -180px;
+    width: 480px; height: 480px;
+    border: 1px solid rgba(184,137,63,0.18);
+    border-radius: 50%;
+  }
+  header::after {
+    content: '';
+    position: absolute;
+    top: -80px; right: -80px;
+    width: 280px; height: 280px;
+    border: 1px solid rgba(184,137,63,0.1);
+    border-radius: 50%;
+  }
+  .header-inner { max-width: 880px; margin: 0 auto; position: relative; z-index: 1; }
+  .eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 28px;
+  }
+  header h1 {
+    font-family: 'Fraunces', serif;
+    font-weight: 400;
+    font-size: clamp(40px, 6vw, 64px);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    max-width: 720px;
+  }
+  header h1 em { font-style: italic; color: var(--gold-soft); }
+  .header-sub {
+    margin-top: 28px;
+    font-size: 15px;
+    color: rgba(245,241,234,0.55);
+    max-width: 580px;
+    line-height: 1.7;
+  }
+  .header-pointer {
+    margin-top: 32px;
+    padding: 16px 22px;
+    background: rgba(184,137,63,0.08);
+    border-left: 2px solid var(--gold);
+    color: rgba(245,241,234,0.85);
+    font-size: 14px;
+    max-width: 680px;
+  }
+  .header-pointer strong { color: var(--gold-soft); font-weight: 500; }
+
+  main { max-width: 880px; margin: -50px auto 0; padding: 0 32px 120px; position: relative; }
+  section {
+    background: var(--paper);
+    margin-bottom: 32px;
+    padding: 56px 64px;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(12,11,10,0.04), 0 12px 40px rgba(12,11,10,0.06);
+  }
+  @media (max-width: 680px) {
+    main { padding: 0 16px 80px; }
+    section { padding: 40px 28px; }
+    header { padding: 60px 24px 90px; }
+  }
+  h2 {
+    font-family: 'Fraunces', serif;
+    font-weight: 400;
+    font-size: 32px;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    margin-bottom: 28px;
+    color: var(--black);
+  }
+  h2 em { font-style: italic; color: var(--gold); }
+  h3 {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 20px;
+    margin-bottom: 12px;
+    color: var(--black);
+  }
+  p { font-size: 16px; color: var(--ink); margin-bottom: 18px; max-width: 64ch; }
+  p.lead { font-size: 18px; line-height: 1.6; }
+  strong { font-weight: 600; color: var(--black); }
+  code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    background: var(--cream);
+    padding: 2px 7px;
+    border-radius: 3px;
+    color: var(--ink);
+  }
+
+  .callout {
+    background: var(--cream);
+    border-left: 3px solid var(--gold);
+    padding: 22px 28px;
+    border-radius: 0 4px 4px 0;
+    margin: 24px 0;
+  }
+  .callout.warning { background: #faf0ec; border-left-color: var(--red); }
+  .callout.info    { background: #eef2ec; border-left-color: var(--green); }
+  .callout.tip     { background: #ecf1f5; border-left-color: var(--blue); }
+  .callout-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    line-height: 1.3;
+  }
+  .callout.warning .callout-label { color: var(--red); }
+  .callout.info    .callout-label { color: var(--green); }
+  .callout.tip     .callout-label { color: var(--blue); }
+  .callout p { margin-bottom: 10px; font-size: 15px; line-height: 1.65; max-width: none; }
+  .callout p:last-child { margin-bottom: 0; }
+
+  .starthere {
+    background: #ecf1f5;
+    border: 1px solid #cdddea;
+    border-radius: 6px;
+    padding: 18px 24px;
+    margin: 0 0 8px;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+  .starthere .sh-icon { font-size: 18px; line-height: 1.5; }
+  .starthere p { margin: 0; font-size: 14.5px; color: var(--ink); max-width: none; }
+  .starthere strong { color: var(--blue); }
+
+  /* TABLE OF CONTENTS */
+  .toc {
+    margin: 28px 0 4px;
+    background: var(--cream);
+    border-radius: 6px;
+    padding: 22px 26px;
+  }
+  .toc-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 16px;
+  }
+  .toc-links {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: repeat(4, auto);
+    grid-auto-flow: column;
+    gap: 2px 28px;
+  }
+  @media (max-width: 680px) { .toc-links { grid-template-columns: 1fr; grid-template-rows: none; grid-auto-flow: row; } }
+  .toc-links a {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    font-size: 15px;
+    color: var(--ink);
+    text-decoration: none;
+    padding: 9px 10px 9px 0;
+    border-bottom: 1px solid rgba(184,137,63,0.15);
+    transition: color 0.15s, padding-left 0.15s;
+  }
+  .toc-links a:hover { color: var(--gold); padding-left: 6px; }
+  .toc-links a .toc-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--gold);
+    flex-shrink: 0;
+    min-width: 18px;
+  }
+  .toc-links a .toc-arrow {
+    margin-left: auto;
+    color: var(--gold-soft);
+    font-size: 13px;
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+  .toc-links a:hover .toc-arrow { opacity: 1; }
+
+  /* TYPE CARDS */
+  .type-card {
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    overflow: hidden;
+    margin: 20px 0;
+  }
+  .type-head {
+    background: var(--cream);
+    padding: 18px 24px;
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+  .type-icon { font-size: 22px; }
+  .type-name {
+    font-family: 'Fraunces', serif;
+    font-size: 21px;
+    font-weight: 500;
+    color: var(--black);
+  }
+  .type-meta {
+    margin-left: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--mid);
+  }
+  .type-body { padding: 22px 24px 24px; }
+  .type-body p { font-size: 14.5px; color: var(--mid); margin-bottom: 14px; line-height: 1.65; max-width: none; }
+  .type-body p:last-child { margin-bottom: 0; }
+  .type-body strong { color: var(--ink); }
+  .trigger-list {
+    background: #1a1814;
+    border-radius: 6px;
+    padding: 14px 18px;
+    margin: 14px 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px;
+    color: var(--gold-soft);
+    line-height: 1.9;
+  }
+  .trigger-list .tl-label {
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(245,241,234,0.4);
+    margin-bottom: 6px;
+  }
+  .type-detail {
+    display: grid;
+    grid-template-columns: 130px 1fr;
+    gap: 4px 16px;
+    margin: 14px 0 0;
+    font-size: 13.5px;
+  }
+  .type-detail dt {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gold);
+    padding-top: 3px;
+  }
+  .type-detail dd { color: var(--ink); line-height: 1.55; }
+  @media (max-width: 680px) {
+    .type-detail { grid-template-columns: 1fr; gap: 2px 0; }
+    .type-detail dt { padding-top: 10px; }
+  }
+
+  /* STEP BLOCKS */
+  .step-block {
+    background: var(--cream);
+    padding: 22px 26px;
+    border-radius: 4px;
+    margin: 16px 0;
+    display: grid;
+    grid-template-columns: 36px 1fr;
+    gap: 18px;
+    align-items: start;
+  }
+  .step-num {
+    font-family: 'Fraunces', serif;
+    font-size: 26px;
+    color: var(--gold);
+    line-height: 1;
+    margin-top: -2px;
+  }
+  .step-content h3 { margin-bottom: 6px; font-size: 17px; }
+  .step-content p { font-size: 14px; color: var(--mid); margin: 0 0 10px; line-height: 1.6; max-width: none; }
+  .step-content p:last-child { margin-bottom: 0; }
+  .step-content strong { color: var(--ink); }
+
+  /* MIR PREVIEW MOCKUP */
+  .mir-mock {
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    overflow: hidden;
+    margin: 16px 0;
+    background: #fbfaf7;
+  }
+  .mir-mock-head {
+    background: #1a1814;
+    color: var(--gold-soft);
+    padding: 12px 18px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .mir-mock-body { padding: 16px 20px 20px; }
+  .mir-sec { margin-bottom: 14px; }
+  .mir-sec:last-child { margin-bottom: 0; }
+  .mir-sec-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 5px;
+  }
+  .mir-sec-content { font-size: 13px; color: var(--mid); line-height: 1.5; }
+  .mir-sec-content .row {
+    display: flex;
+    gap: 8px;
+    padding: 2px 0;
+  }
+  .mir-sec-content .dot { color: var(--gold-soft); flex-shrink: 0; }
+  .mir-table-row {
+    display: grid;
+    grid-template-columns: 1fr 90px 90px;
+    gap: 16px;
+    font-size: 12px;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--cream);
+    align-items: center;
+  }
+  .mir-table-row:last-child { border-bottom: none; }
+  .mir-table-row.head {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--gold);
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 7px;
+    margin-bottom: 2px;
+  }
+  .mir-table-row span:nth-child(2),
+  .mir-table-row span:nth-child(3) { color: var(--ink); white-space: nowrap; }
+  .mir-table-row span:nth-child(1) { color: var(--mid); }
+
+  footer {
+    background: var(--black);
+    color: rgba(245,241,234,0.4);
+    padding: 36px 56px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.05em;
+  }
+  .footer-inner {
+    max-width: 880px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .accent { color: var(--gold); }
+
+  .nav-back { max-width: 880px; margin: 0 auto; padding: 24px 32px 0; }
+  .nav-back a {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold);
+    text-decoration: none;
+    opacity: 0.7;
+    transition: opacity 0.15s;
+  }
+  .nav-back a:hover { opacity: 1; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="eyebrow">Epic Comedy Berlin · Internal Guides</div>
+    <h1>Meeting <em>Reports (MIR)</em></h1>
+    <p class="header-sub">What a Meeting Intelligence Report is, why every meeting needs one, and how to generate it — at the close of a meeting or for one that got missed.</p>
+    <div class="header-pointer">
+      <strong>The one thing to remember:</strong> every meeting ends with an MIR, and someone has to generate it. It doesn't happen on its own. The MIR is what turns a meeting into a record the rest of the system can use.
+    </div>
+  </div>
+</header>
+
+<div class="nav-back">
+  <a href="https://epic-comedy-berlin.github.io/ecb-internal/">← Back to all guides</a>
+</div>
+
+<main>
+
+  <!-- ───────── START HERE ───────── -->
+  <section>
+    <div class="starthere">
+      <span class="sh-icon">👋</span>
+      <p><strong>First time?</strong> Read this through, starting with <a href="#what" style="color:var(--blue);">What an MIR is</a> so you understand why it matters. <strong>Just need to run one at the close of a meeting?</strong> Jump to <a href="#generate" style="color:var(--blue);">How to generate one</a>.</p>
+    </div>
+
+    <div class="toc">
+      <div class="toc-label">On this page</div>
+      <div class="toc-links">
+        <a href="#what"><span class="toc-num">01</span>What an MIR is<span class="toc-arrow">→</span></a>
+        <a href="#types"><span class="toc-num">02</span>The two types<span class="toc-arrow">→</span></a>
+        <a href="#inside"><span class="toc-num">03</span>What's inside one<span class="toc-arrow">→</span></a>
+        <a href="#generate"><span class="toc-num">04</span>How to generate one<span class="toc-arrow">→</span></a>
+        <a href="#missed"><span class="toc-num">05</span>A meeting that was missed<span class="toc-arrow">→</span></a>
+        <a href="#long"><span class="toc-num">06</span>Long meetings (2 hrs+)<span class="toc-arrow">→</span></a>
+        <a href="#troubleshooting"><span class="toc-num">07</span>Troubleshooting<span class="toc-arrow">→</span></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────── WHAT IT IS ───────── -->
+  <section id="what">
+    <h2>What an <em>MIR is</em></h2>
+    <p class="lead">An MIR — Meeting Intelligence Report — is a structured written summary of a meeting. Claude builds it from the meeting's recording, capturing every decision made, task assigned, blocker raised, and what the next meeting needs to focus on.</p>
+    <p>It does two jobs. First — for Thursday and ad hoc sessions — it gives the team a record to read through at the close: the meeting lead reads it aloud to confirm decisions, actions, and next steps before everyone leaves. (Stand-ups don't do this read-aloud — their MIR is generated after the meeting ends.) Second, for every meeting type, it becomes a permanent reference in <strong>#mir-reports</strong> that Claude reads when building the next agenda. <em>(Channel details: the <a href="https://epic-comedy-berlin.github.io/ecb-internal/slack-guide.html" style="color:var(--blue);">Slack guide</a>.)</em></p>
+
+    <div class="callout warning">
+      <div class="callout-label">It doesn't generate itself</div>
+      <p>This is the most important thing about MIRs: <strong>someone has to trigger it.</strong> Claude does not produce an MIR automatically when a meeting ends. Claude can still read the raw Fireflies transcript later, so a meeting's content isn't lost without one — but the MIR is what makes the meeting <em>usable</em> by the rest of the system. Most importantly, the Monday stand-up's MIR is what sets Thursday's focus: no MIR means the Thursday agenda has nothing to pull from. It's also the record the team reads aloud at the close to confirm decisions, and the clean reference Claude reads instead of re-scanning a long transcript. Generating it is a fixed step, not an optional extra — after every stand-up, and at the close of every Thursday and ad hoc session.</p>
+    </div>
+
+    <h3 style="margin-top: 28px;">Where it fits</h3>
+    <p>The MIR is the hinge between one meeting and the next. A Monday stand-up's MIR sets the focus for Thursday. A Thursday meeting's MIR gives the team a structured record at the close and a clean reference in #mir-reports. Without it, the meeting still sits in the Fireflies transcript, but the agenda chain loses its input. <em>The full cycle is in the <a href="https://epic-comedy-berlin.github.io/ecb-internal/meeting-agendas-guide.html" style="color:var(--blue);">Meeting Agendas guide</a>.</em></p>
+  </section>
+
+  <!-- ───────── THE TWO TYPES ───────── -->
+  <section id="types">
+    <h2>The two <em>types</em></h2>
+    <p>There are two kinds of MIR, matched to the two main meeting types. The trigger phrase tells Claude which to build.</p>
+
+    <!-- STANDUP MIR -->
+    <div class="type-card">
+      <div class="type-head">
+        <span class="type-icon">📋</span>
+        <span class="type-name">Stand-up MIR</span>
+        <span class="type-meta">after Monday stand-up</span>
+      </div>
+      <div class="type-body">
+        <p>A tight summary of the Monday stand-up. Captures each person's task status, anything completed, unresolved flags, and — most importantly — the <strong>Thursday agenda items</strong>. That block is what the Thursday agenda builder reads to set the focus, so the stand-up MIR is what actually carries Monday's outcomes into Thursday.</p>
+        <div class="trigger-list">
+          <div class="tl-label">Trigger phrases — any of these</div>
+          "Run standup MIR" · "MIR for today's stand-up" · "Standup MIR" · "Generate standup MIR"
+        </div>
+        <dl class="type-detail">
+          <dt>Produces</dt>
+          <dd>Task status per person, completions, unresolved flags, and the Thursday agenda items block</dd>
+          <dt>Feeds</dt>
+          <dd>The Thursday working meeting agenda</dd>
+        </dl>
+      </div>
+    </div>
+
+    <!-- WORK MEETING MIR -->
+    <div class="type-card">
+      <div class="type-head">
+        <span class="type-icon">🗒</span>
+        <span class="type-name">Work Meeting MIR</span>
+        <span class="type-meta">after Thursday / monthly / ad hoc</span>
+      </div>
+      <div class="type-body">
+        <p>A fuller report from a working session — Thursday, monthly review, or ad hoc. Captures answers to any questions asked of Claude during the meeting, every decision made, open questions, the full actions table (task, owner, deadline), risks and flags, and the focus items for the next meeting. This is the one the meeting lead reads aloud at the close.</p>
+        <div class="trigger-list">
+          <div class="tl-label">Trigger phrases — any of these</div>
+          "Run MIR" · "Run work meeting MIR" · "MIR for today's meeting" · "Generate MIR" · "Give me the MIR"
+        </div>
+        <dl class="type-detail">
+          <dt>Produces</dt>
+          <dd>Decisions, an actions table with owners and deadlines, risks, an active scan of anything missed, and next meeting focus</dd>
+          <dt>Feeds</dt>
+          <dd>The next agenda and the log update that refreshes the project files</dd>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────── WHAT'S IN ONE ───────── -->
+  <section id="inside">
+    <h2>What's <em>inside one</em></h2>
+    <p>The two types contain different sections, matched to what each meeting produces. You don't write any of this — Claude builds it from the transcript — but knowing the shape helps you spot if something's missing before you confirm the send.</p>
+
+    <div class="mir-mock">
+      <div class="mir-mock-head">📋 Stand-up MIR</div>
+      <div class="mir-mock-body">
+        <div class="mir-sec">
+          <div class="mir-sec-label">Task status</div>
+          <div class="mir-sec-content">
+            <div class="row"><span class="dot">›</span><span>Per person: what's done, in progress, or blocked</span></div>
+          </div>
+        </div>
+        <div class="mir-sec">
+          <div class="mir-sec-label">Completions</div>
+          <div class="mir-sec-content">
+            <div class="row"><span class="dot">›</span><span>Anything confirmed finished in the stand-up</span></div>
+          </div>
+        </div>
+        <div class="mir-sec">
+          <div class="mir-sec-label">Flags not resolved</div>
+          <div class="mir-sec-content">
+            <div class="row"><span class="dot">›</span><span>Blockers, deadlines, overdue items, risks — from the Active Scan</span></div>
+          </div>
+        </div>
+        <div class="mir-sec">
+          <div class="mir-sec-label">Thursday agenda items ← the key output</div>
+          <div class="mir-sec-content">
+            <div class="row"><span class="dot">›</span><span>What Thursday will focus on — this is what the Thursday agenda reads</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mir-mock">
+      <div class="mir-mock-head">🗒 Work Meeting MIR &nbsp;<span style="color:rgba(245,241,234,0.4)">— Thursday / monthly / ad hoc</span></div>
+      <div class="mir-mock-body">
+        <div class="mir-sec">
+          <div class="mir-sec-label">Claude research responses</div>
+          <div class="mir-sec-content">
+            <div class="row"><span class="dot">›</span><span>Answers to anything the team asked Claude to look into</span></div>
+          </div>
+        </div>
+        <div class="mir-sec">
+          <div class="mir-sec-label">Decisions made</div>
+          <div class="mir-sec-content">
+            <div class="row"><span class="dot">›</span><span>One line per decision, with owner</span></div>
+          </div>
+        </div>
+        <div class="mir-sec">
+          <div class="mir-sec-label">Actions ← read aloud at the close</div>
+          <div class="mir-sec-content">
+            <div class="mir-table-row head"><span>Task</span><span>Owner</span><span>Deadline</span></div>
+            <div class="mir-table-row"><span>Send the vendor doc to Brendan</span><span>Ori</span><span>Fri</span></div>
+            <div class="mir-table-row"><span>Fix GA4 referral bug</span><span>Aaron</span><span>ASAP</span></div>
+          </div>
+        </div>
+        <div class="mir-sec">
+          <div class="mir-sec-label">Risks + flags</div>
+          <div class="mir-sec-content">
+            <div class="row"><span class="dot">›</span><span>Risks raised, plus any system or automation issues</span></div>
+          </div>
+        </div>
+        <div class="mir-sec">
+          <div class="mir-sec-label">Active scan</div>
+          <div class="mir-sec-content">
+            <div class="row"><span class="dot">›</span><span>What the meeting <em>didn't</em> get to — overdue tasks, deadlines, blockers it missed</span></div>
+          </div>
+        </div>
+        <div class="mir-sec">
+          <div class="mir-sec-label">Next meeting focus</div>
+          <div class="mir-sec-content">
+            <div class="row"><span class="dot">›</span><span>Items that carry into the next agenda</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout tip">
+      <div class="callout-label">Why the Active Scan matters</div>
+      <p>That "active scan" line is the MIR's safety net. It means the report doesn't only capture what the meeting <em>did</em> — it also checks the live task list and flags what the meeting <em>missed</em>, then carries those items into the next meeting's focus so nothing quietly falls off the list. Both MIR types run it.</p>
+    </div>
+  </section>
+
+  <!-- ───────── HOW TO GENERATE ───────── -->
+  <section id="generate">
+    <h2>How to <em>generate one</em></h2>
+    <p class="lead">Every meeting gets an MIR — but <em>when</em> you run it differs by type. The meeting lead owns it.</p>
+
+    <div class="callout info">
+      <div class="callout-label">Whose job this is</div>
+      <p>The <strong>meeting lead generates the MIR.</strong> If you're unsure how, Aaron can run it — or you can ask Aaron to. The important thing is that it gets done.</p>
+    </div>
+
+    <div class="callout">
+      <div class="callout-label">When to run it</div>
+      <p><strong>Thursday and ad hoc sessions:</strong> in the <strong>last 15 minutes</strong>, as the close. The meeting lead triggers the MIR, then reads it aloud to confirm decisions and actions before anyone leaves — the close is built around the MIR.</p>
+      <p><strong>Monday stand-up:</strong> <strong>after the meeting ends.</strong> The stand-up is a quick status check with no read-aloud close, so its MIR is generated once the meeting is done.</p>
+    </div>
+
+    <div class="step-block">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <h3>Confirm Fireflies recorded the meeting</h3>
+        <p>The MIR is built entirely from the Fireflies transcript, so Fireflies has to have been in the meeting. <strong>Check this at the <em>start</em> of every meeting, not the end</strong> — if it isn't there, add it immediately following the <a href="https://epic-comedy-berlin.github.io/ecb-internal/fireflies-guide.html" style="color:var(--blue);">Fireflies guide</a>. If it never joined, there's no transcript and no MIR can be built.</p>
+      </div>
+    </div>
+
+    <div class="step-block">
+      <div class="step-num">2</div>
+      <div class="step-content">
+        <h3>Open a new chat and turn on the connectors</h3>
+        <p>Start a fresh chat in the ECB project. The MIR needs two connectors on: <strong><a href="https://epic-comedy-berlin.github.io/ecb-internal/fireflies-guide.html" style="color:var(--blue);">Fireflies</a></strong> (to pull the transcript) and <strong>Zapier</strong> (to post to Slack). Turn them on via the <strong>+</strong> in the message box → <strong>Connectors</strong>, toggle each one on, and toggle them off again once the MIR is posted. Sonnet is fine — no need for Opus. <em>Connector basics are in the <a href="https://epic-comedy-berlin.github.io/ecb-internal/claude-token-guide.html" style="color:var(--blue);">Claude usage guide</a>.</em></p>
+      </div>
+    </div>
+
+    <div class="step-block">
+      <div class="step-num">3</div>
+      <div class="step-content">
+        <h3>Type the trigger phrase</h3>
+        <p>Use the phrase for the meeting type — <code>Run standup MIR</code> after a Monday stand-up, or <code>Run MIR</code> after a Thursday, monthly, or ad hoc session. Claude finds the transcript and builds the report.</p>
+      </div>
+    </div>
+
+    <div class="step-block">
+      <div class="step-num">4</div>
+      <div class="step-content">
+        <h3>Review, then confirm the send</h3>
+        <p>Claude generates the MIR in the chat and shows it to you first. If anything's wrong or missing, tell Claude what to fix. Once it's right, give the okay and Claude posts it to <strong>#mir-reports</strong>.</p>
+      </div>
+    </div>
+
+    <p style="margin-top: 28px;">That's the whole flow for a <strong>stand-up</strong> MIR — run it once the meeting's done. A <strong>Thursday or ad hoc</strong> close has a specific order on top of these steps, because of how Fireflies processes recordings:</p>
+
+    <div class="callout">
+      <div class="callout-label">The Thursday / ad hoc close sequence</div>
+      <p>The close is built around the MIR and runs in the last 15 minutes. The order matters because Fireflies has to <em>leave</em> a meeting before it can turn the recording into the transcript the MIR needs:</p>
+      <p><strong>1. Re-add Fireflies for the close.</strong> Kick it out and reinvite it (per the <a href="https://epic-comedy-berlin.github.io/ecb-internal/fireflies-guide.html" style="color:var(--blue);">Fireflies guide</a>) so the close gets recorded as its own chunk. On sessions over two hours this also captures the final part Fireflies had split off.<br>
+      <strong>2. Run the MIR</strong> (steps 2–4 above) and read it aloud to confirm decisions, actions, and next steps before anyone leaves.<br>
+      <strong>3. Run the log update later</strong> — once the meeting has ended and Fireflies has processed the closing chunk. Run it after the meeting is fully finished, not during the close. Because the close was recorded, the log update picks up the read-aloud and confirmations too. Default is Aaron updates that night. <em>See the <a href="https://epic-comedy-berlin.github.io/ecb-internal/log-tracker-guide.html" style="color:var(--blue);">Log Tracker guide</a>.</em></p>
+    </div>
+  </section>
+
+  <!-- ───────── MISSED MEETING ───────── -->
+  <section id="missed">
+    <h2>Generating one for a <em>missed meeting</em></h2>
+    <p class="lead">If a meeting happened but no MIR was generated at the time, you can still produce one afterwards — as long as Fireflies recorded the meeting.</p>
+    <p>This comes up most often when a Thursday agenda has no focus items: it means the Monday stand-up's MIR was never generated, so there's nothing for Thursday to pull from. The fix is to generate the missing MIR first, then rebuild the agenda.</p>
+
+    <div class="step-block">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <h3>Open a new chat with Fireflies + Zapier on</h3>
+        <p>Same connector setup as a normal MIR (Fireflies to pull the transcript, Zapier to post to Slack). The transcript still exists in Fireflies from when the meeting happened.</p>
+      </div>
+    </div>
+
+    <div class="step-block">
+      <div class="step-num">2</div>
+      <div class="step-content">
+        <h3>Trigger the MIR and name the meeting</h3>
+        <p>Use the trigger phrase, but tell Claude which meeting it's for — for example, <code>Run standup MIR for Monday's stand-up</code>. Naming the date helps Claude find the right transcript rather than assuming it's today's.</p>
+      </div>
+    </div>
+
+    <div class="step-block">
+      <div class="step-num">3</div>
+      <div class="step-content">
+        <h3>Review, confirm, and let it post</h3>
+        <p>Same as usual — Claude shows the MIR, you check it, confirm, and it posts to #mir-reports. The Thursday agenda can then pull the focus from it. If you're rebuilding a downstream agenda, do that after the MIR is posted.</p>
+      </div>
+    </div>
+
+    <div class="callout warning">
+      <div class="callout-label">The one limit</div>
+      <p>An MIR can only be built if <strong>Fireflies actually recorded the meeting</strong>. If Fireflies wasn't in the session, there's no transcript to build from and no MIR is possible. This is why getting Fireflies into every meeting matters — see the <a href="https://epic-comedy-berlin.github.io/ecb-internal/fireflies-guide.html" style="color:var(--blue);">Fireflies guide</a>.</p>
+    </div>
+  </section>
+
+  <!-- ───────── LONG MEETINGS ───────── -->
+  <section id="long">
+    <h2>Long meetings <em>(2 hours+)</em></h2>
+    <p class="lead">Fireflies on the free plan caps recordings at two hours, so a longer Thursday or ad hoc session gets split into multiple transcript parts — Part 1, Part 2, and so on.</p>
+    <p>This doesn't change the MIR you get. Claude pulls <strong>all parts from the same day</strong> and treats them as one meeting, producing a single report covering the whole session — never one MIR per part. If you ever suspect a part is missing, tell Claude; it should never build an MIR from a partial transcript.</p>
+    <p>The only thing you have to do is make sure every part actually got recorded. That's handled in two places, both covered by the <a href="https://epic-comedy-berlin.github.io/ecb-internal/fireflies-guide.html" style="color:var(--blue);">Fireflies guide</a>: re-adding Fireflies <em>during</em> the meeting when it leaves at the two-hour mark, and re-adding it again at the close before you run the MIR (step 2 above) so the final chunk — including the close itself — is captured.</p>
+  </section>
+
+  <!-- ───────── TROUBLESHOOTING ───────── -->
+  <section id="troubleshooting">
+    <h2>If something <em>goes wrong</em></h2>
+
+    <div class="callout warning">
+      <div class="callout-label">Claude can't find the transcript</div>
+      <p>Check that Fireflies is turned on as a connector in this chat, and that Fireflies actually attended the meeting. If it attended but the transcript isn't showing, it may still be processing — wait a few minutes and try again. If Fireflies never joined, no MIR can be built.</p>
+    </div>
+
+    <div class="callout warning">
+      <div class="callout-label">The MIR didn't post to Slack</div>
+      <p>Check that the Slack connector (via Zapier) was on before you confirmed the send. If it was off, turn it on and ask Claude to post the MIR to #mir-reports. If Claude reports an error rather than posting cleanly, flag it to Aaron in #p1-important.</p>
+    </div>
+
+    <div class="callout warning">
+      <div class="callout-label">The MIR is missing something from the meeting</div>
+      <p>Tell Claude what's missing before you confirm the send — "you missed the decision about the merch supplier," or "the action for Ori isn't in the table." It works from the transcript, so if something was said it can be added. Don't post an incomplete MIR; fix it first.</p>
+    </div>
+
+    <div class="callout tip">
+      <div class="callout-label">It only captured part of a long meeting</div>
+      <p>If the meeting ran over two hours and the MIR only reflects the first part, Claude likely didn't pull every transcript part. Tell it there are more parts from the same day and to pull all of them before rebuilding.</p>
+    </div>
+  </section>
+
+  <!-- ───────── QUESTIONS ───────── -->
+  <section>
+    <h2>Questions?</h2>
+    <p>For anything about MIRs or how they connect to the rest of the system, ask Aaron in <strong>#p1-important</strong>. Related: the <a href="https://epic-comedy-berlin.github.io/ecb-internal/meeting-agendas-guide.html" style="color:var(--blue);">Meeting Agendas guide</a> for the full meeting cycle, the <a href="https://epic-comedy-berlin.github.io/ecb-internal/fireflies-guide.html" style="color:var(--blue);">Fireflies guide</a> for recording, and the <a href="https://epic-comedy-berlin.github.io/ecb-internal/log-tracker-guide.html" style="color:var(--blue);">Log Tracker guide</a> for the log update that follows.</p>
+  </section>
+
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <div>Epic Comedy Berlin · Internal use only · MIR Guide</div>
+    <div>Updated <span class="accent">June 2026</span></div>
+  </div>
+</footer>
+
+</body>
+</html>

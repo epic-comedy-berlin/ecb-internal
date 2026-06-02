@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ECB Log Update Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;1,9..144,400&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0c0b0a;
+    --bg: #f5f1ea;
+    --paper: #ffffff;
+    --cream: #ece6db;
+    --gold: #b8893f;
+    --gold-soft: #d4ae6f;
+    --red: #b8453a;
+    --green: #4a7c4e;
+    --blue: #3a6e8f;
+    --ink: #1f1c18;
+    --mid: #6b645b;
+    --line: #d6cfc1;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Inter', -apple-system, sans-serif;
+    font-weight: 400;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  header {
+    background: var(--black);
+    color: var(--bg);
+    padding: 80px 56px 100px;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute;
+    top: -180px; right: -180px;
+    width: 480px; height: 480px;
+    border: 1px solid rgba(184,137,63,0.18);
+    border-radius: 50%;
+  }
+  header::after {
+    content: '';
+    position: absolute;
+    top: -80px; right: -80px;
+    width: 280px; height: 280px;
+    border: 1px solid rgba(184,137,63,0.1);
+    border-radius: 50%;
+  }
+  .header-inner { max-width: 880px; margin: 0 auto; position: relative; z-index: 1; }
+  .eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 28px;
+  }
+  header h1 {
+    font-family: 'Fraunces', serif;
+    font-weight: 400;
+    font-size: clamp(40px, 6vw, 64px);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    max-width: 720px;
+  }
+  header h1 em { font-style: italic; color: var(--gold-soft); }
+  .header-sub {
+    margin-top: 28px;
+    font-size: 15px;
+    color: rgba(245,241,234,0.55);
+    max-width: 580px;
+    line-height: 1.7;
+  }
+  .header-pointer {
+    margin-top: 32px;
+    padding: 16px 22px;
+    background: rgba(184,137,63,0.08);
+    border-left: 2px solid var(--gold);
+    color: rgba(245,241,234,0.85);
+    font-size: 14px;
+    max-width: 680px;
+  }
+  .header-pointer strong { color: var(--gold-soft); font-weight: 500; }
+
+  main { max-width: 880px; margin: -50px auto 0; padding: 0 32px 120px; position: relative; }
+  section {
+    background: var(--paper);
+    margin-bottom: 32px;
+    padding: 56px 64px;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(12,11,10,0.04), 0 12px 40px rgba(12,11,10,0.06);
+  }
+  @media (max-width: 680px) {
+    main { padding: 0 16px 80px; }
+    section { padding: 40px 28px; }
+    header { padding: 60px 24px 90px; }
+  }
+  h2 {
+    font-family: 'Fraunces', serif;
+    font-weight: 400;
+    font-size: 32px;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    margin-bottom: 28px;
+    color: var(--black);
+  }
+  h2 em { font-style: italic; color: var(--gold); }
+  h3 {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 20px;
+    margin-bottom: 12px;
+    color: var(--black);
+  }
+  p { font-size: 16px; color: var(--ink); margin-bottom: 18px; max-width: 64ch; }
+  p.lead { font-size: 18px; line-height: 1.6; }
+  strong { font-weight: 600; color: var(--black); }
+  code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    background: var(--cream);
+    padding: 2px 7px;
+    border-radius: 3px;
+    color: var(--ink);
+  }
+
+  .callout {
+    background: var(--cream);
+    border-left: 3px solid var(--gold);
+    padding: 22px 28px;
+    border-radius: 0 4px 4px 0;
+    margin: 24px 0;
+  }
+  .callout.warning { background: #faf0ec; border-left-color: var(--red); }
+  .callout.info    { background: #eef2ec; border-left-color: var(--green); }
+  .callout.tip     { background: #ecf1f5; border-left-color: var(--blue); }
+  .callout-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    line-height: 1.3;
+  }
+  .callout.warning .callout-label { color: var(--red); }
+  .callout.info    .callout-label { color: var(--green); }
+  .callout.tip     .callout-label { color: var(--blue); }
+  .callout p { margin-bottom: 10px; font-size: 15px; line-height: 1.65; max-width: none; }
+  .callout p:last-child { margin-bottom: 0; }
+
+  .starthere {
+    background: #ecf1f5;
+    border: 1px solid #cdddea;
+    border-radius: 6px;
+    padding: 18px 24px;
+    margin: 0 0 8px;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+  .starthere .sh-icon { font-size: 18px; line-height: 1.5; }
+  .starthere p { margin: 0; font-size: 14.5px; color: var(--ink); max-width: none; }
+  .starthere strong { color: var(--blue); }
+
+  /* TABLE OF CONTENTS */
+  .toc {
+    margin: 28px 0 4px;
+    background: var(--cream);
+    border-radius: 6px;
+    padding: 22px 26px;
+  }
+  .toc-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 16px;
+  }
+  .toc-links {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: repeat(3, auto);
+    grid-auto-flow: column;
+    gap: 2px 28px;
+  }
+  @media (max-width: 680px) { .toc-links { grid-template-columns: 1fr; grid-template-rows: none; grid-auto-flow: row; } }
+  .toc-links a {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    font-size: 15px;
+    color: var(--ink);
+    text-decoration: none;
+    padding: 9px 10px 9px 0;
+    border-bottom: 1px solid rgba(184,137,63,0.15);
+    transition: color 0.15s, padding-left 0.15s;
+  }
+  .toc-links a:hover { color: var(--gold); padding-left: 6px; }
+  .toc-links a .toc-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--gold);
+    flex-shrink: 0;
+    min-width: 18px;
+  }
+  .toc-links a .toc-arrow {
+    margin-left: auto;
+    color: var(--gold-soft);
+    font-size: 13px;
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+  .toc-links a:hover .toc-arrow { opacity: 1; }
+
+  /* FLOW */
+  .flow {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0;
+    margin: 28px 0 12px;
+  }
+  @media (max-width: 760px) { .flow { grid-template-columns: 1fr; gap: 8px; } }
+  .flow-step {
+    background: var(--cream);
+    padding: 18px 10px;
+    text-align: center;
+    position: relative;
+    border-radius: 3px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 108px;
+  }
+  .flow-step:not(:last-child)::after {
+    content: '→';
+    position: absolute;
+    right: -9px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--gold);
+    font-size: 15px;
+    font-weight: 500;
+    background: var(--paper);
+    padding: 0 3px;
+    z-index: 2;
+  }
+  @media (max-width: 760px) {
+    .flow-step:not(:last-child)::after { content: '↓'; right: 50%; top: auto; bottom: -16px; transform: translateX(50%); }
+  }
+  .flow-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    color: var(--gold);
+    margin-bottom: 8px;
+    letter-spacing: 0.1em;
+  }
+  .flow-label { font-size: 12.5px; font-weight: 500; color: var(--ink); line-height: 1.35; }
+  .flow-sub { font-size: 11px; color: var(--mid); margin-top: 4px; line-height: 1.35; }
+  .flow-step.confirm { background: #ecf1f5; }
+
+  /* STEP BLOCKS */
+  .step-block {
+    background: var(--cream);
+    padding: 22px 26px;
+    border-radius: 4px;
+    margin: 16px 0;
+    display: grid;
+    grid-template-columns: 36px 1fr;
+    gap: 18px;
+    align-items: start;
+  }
+  .step-num {
+    font-family: 'Fraunces', serif;
+    font-size: 26px;
+    color: var(--gold);
+    line-height: 1;
+    margin-top: -2px;
+  }
+  .step-content h3 { margin-bottom: 6px; font-size: 17px; }
+  .step-content p { font-size: 14px; color: var(--mid); margin: 0 0 10px; line-height: 1.6; max-width: none; }
+  .step-content p:last-child { margin-bottom: 0; }
+  .step-content strong { color: var(--ink); }
+
+  /* TRIGGER LIST */
+  .trigger-list {
+    background: #1a1814;
+    border-radius: 6px;
+    padding: 16px 20px;
+    margin: 18px 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--gold-soft);
+    line-height: 2;
+  }
+  .trigger-list .tl-label {
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(245,241,234,0.4);
+    margin-bottom: 8px;
+  }
+
+  /* FILE PILLS */
+  .filepair {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin: 18px 0;
+  }
+  .filepill {
+    background: var(--cream);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 14px 18px;
+    flex: 1;
+    min-width: 220px;
+  }
+  .filepill .fp-name {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px;
+    color: var(--gold);
+    margin-bottom: 4px;
+  }
+  .filepill .fp-desc { font-size: 13px; color: var(--mid); line-height: 1.5; }
+
+  /* INGESTION SUMMARY MOCKUP */
+  .sum-mock {
+    background: #fbfaf7;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    overflow: hidden;
+    margin: 16px 0;
+  }
+  .sum-head {
+    background: #1a1814;
+    color: var(--gold-soft);
+    padding: 11px 18px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.04em;
+  }
+  .sum-body { padding: 16px 20px; }
+  .sum-row {
+    display: flex;
+    gap: 10px;
+    font-size: 13px;
+    padding: 4px 0;
+    color: var(--ink);
+    line-height: 1.5;
+  }
+  .sum-row .sum-k {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--mid);
+    min-width: 150px;
+    flex-shrink: 0;
+  }
+  .sum-row .sum-v { color: var(--ink); }
+  .sum-divider { border: none; border-top: 1px solid var(--cream); margin: 12px 0; }
+  .sum-flags-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 8px;
+  }
+  .sum-flag { font-size: 12.5px; color: var(--ink); padding: 2px 0; }
+  .sum-flag .ft { color: var(--red); font-weight: 600; }
+  .sum-confirm {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid var(--cream);
+    font-size: 12.5px;
+    color: var(--mid);
+    font-style: italic;
+  }
+
+  /* FILES PANEL MOCKUP */
+  .files-mock {
+    background: #1f1c18;
+    border-radius: 10px;
+    padding: 20px 22px;
+    margin: 18px 0;
+  }
+  .fm-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 6px;
+  }
+  .fm-head .fm-title { font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 600; color: #f0ebe2; }
+  .fm-head .fm-plus {
+    margin-left: auto;
+    width: 22px; height: 22px;
+    border-radius: 5px;
+    border: 1px solid rgba(245,241,234,0.25);
+    color: #d4ae6f;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px;
+  }
+  .fm-cap { font-size: 11px; color: rgba(245,241,234,0.35); margin-bottom: 16px; font-family: 'JetBrains Mono', monospace; letter-spacing: 0.04em; }
+  .fm-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  @media (max-width: 600px) { .fm-grid { grid-template-columns: 1fr 1fr; } }
+  .fm-card {
+    background: #2a2620;
+    border: 1px solid rgba(245,241,234,0.08);
+    border-radius: 7px;
+    padding: 12px 12px 10px;
+    position: relative;
+    min-height: 78px;
+  }
+  .fm-card .fm-name { font-size: 11px; color: #ece6db; line-height: 1.35; word-break: break-word; }
+  .fm-card .fm-lines { font-size: 9.5px; color: rgba(245,241,234,0.35); margin-top: 6px; }
+  .fm-card .fm-badge {
+    display: inline-block;
+    margin-top: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 0.1em;
+    color: rgba(245,241,234,0.5);
+    border: 1px solid rgba(245,241,234,0.15);
+    border-radius: 3px;
+    padding: 1px 5px;
+  }
+  .fm-card.highlight { border-color: var(--gold); }
+  .fm-card .fm-x {
+    position: absolute;
+    top: -7px; left: -7px;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: #2a2620;
+    border: 1px solid rgba(245,241,234,0.3);
+    color: #f0ebe2;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px;
+    line-height: 1;
+  }
+  .fm-caption { font-size: 12.5px; color: var(--mid); margin-top: 12px; font-style: italic; }
+
+  footer {
+    background: var(--black);
+    color: rgba(245,241,234,0.4);
+    padding: 36px 56px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.05em;
+  }
+  .footer-inner {
+    max-width: 880px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .accent { color: var(--gold); }
+
+  .nav-back { max-width: 880px; margin: 0 auto; padding: 24px 32px 0; }
+  .nav-back a {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold);
+    text-decoration: none;
+    opacity: 0.7;
+    transition: opacity 0.15s;
+  }
+  .nav-back a:hover { opacity: 1; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="eyebrow">Epic Comedy Berlin · Internal Guides</div>
+    <h1>The <em>Log Update</em></h1>
+    <p class="header-sub">What the log update is, why it keeps the whole system honest, and how to run one — normally Aaron's job, with a fallback path for when it can't wait.</p>
+    <div class="header-pointer">
+      <strong>What this is:</strong> the log update is how ECB's project files stay current. Claude scans the recent meetings, Slack, and chats, then rebuilds the two files that everything else reads from. It runs after meetings, and any time the files have fallen behind reality.
+    </div>
+  </div>
+</header>
+
+<div class="nav-back">
+  <a href="https://epic-comedy-berlin.github.io/ecb-internal/">← Back to all guides</a>
+</div>
+
+<main>
+
+  <!-- ───────── START HERE ───────── -->
+  <section>
+    <div class="starthere">
+      <span class="sh-icon">👋</span>
+      <p><strong>First time?</strong> Read this through, starting with <a href="#what" style="color:var(--blue);">What the log update is</a>. <strong>This is normally Aaron's job.</strong> If you're Ori or Brendan, you only need it for the rare case Aaron's away and it can't wait — jump to <a href="#fallback" style="color:var(--blue);">running it yourself</a>, but read <a href="#how" style="color:var(--blue);">How to run one</a> first, since that's the actual process.</p>
+    </div>
+
+    <div class="toc">
+      <div class="toc-label">On this page</div>
+      <div class="toc-links">
+        <a href="#what"><span class="toc-num">01</span>What the log update is<span class="toc-arrow">→</span></a>
+        <a href="#files"><span class="toc-num">02</span>The two files<span class="toc-arrow">→</span></a>
+        <a href="#when"><span class="toc-num">03</span>When it runs<span class="toc-arrow">→</span></a>
+        <a href="#how"><span class="toc-num">04</span>How to run one<span class="toc-arrow">→</span></a>
+        <a href="#troubleshooting"><span class="toc-num">05</span>Troubleshooting<span class="toc-arrow">→</span></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────── WHAT IT IS ───────── -->
+  <section id="what">
+    <h2>What the log update <em>is</em></h2>
+    <p class="lead">The log update is the process that keeps ECB's project files accurate. Claude scans everything that's happened since the last update — meeting transcripts, <a href="https://epic-comedy-berlin.github.io/ecb-internal/slack-guide.html" style="color:var(--blue);">Slack</a>, recent chats — pulls out the tasks, decisions, risks, and completions, and rebuilds the files the rest of the system reads from.</p>
+    <p>Those files are the company's working memory. Every agenda, every MIR, every briefing is only as accurate as they are. The log update is what keeps that memory current — without it, the files slowly drift out of date and everything built on them drifts with them.</p>
+
+    <div class="callout info">
+      <div class="callout-label">Where everything reads from</div>
+      <p>The main file the log update maintains is <strong>Active State</strong> — ECB's single source of truth. When an agenda pulls your P1 tasks or an MIR checks what's overdue, that's the file it reads. So a stale Active State quietly makes every agenda and MIR stale too; keeping it current is the whole point of the update.</p>
+    </div>
+
+    <h3 style="margin-top: 28px;">What it actually does</h3>
+    <p>On each run, Claude scans the sources, cross-checks everything against the existing files, shows you a summary of what changed, waits for your okay, and only then rebuilds the files. It never deletes anything — completed tasks and resolved risks move into the archive rather than disappearing — and it never invents a completion or a decision that wasn't actually confirmed.</p>
+  </section>
+
+  <!-- ───────── THE TWO FILES ───────── -->
+  <section id="files">
+    <h2>The two <em>files it maintains</em></h2>
+    <p>A log update rebuilds two of ECB's three project files. The third — Master Context — holds slow-moving company facts and is updated separately and rarely, through its own process. <em>See the <a href="https://epic-comedy-berlin.github.io/ecb-internal/master-context-guide.html" style="color:var(--blue);">Master Context guide</a> for that.</em></p>
+
+    <div class="filepair">
+      <div class="filepill">
+        <div class="fp-name">ECB_Active_State</div>
+        <div class="fp-desc">Current operational reality — open tasks by priority, risks, pending decisions, standing rules. The single source of truth, read by every agenda and MIR. Changes constantly.</div>
+      </div>
+      <div class="filepill">
+        <div class="fp-name">ECB_Decision_Archive</div>
+        <div class="fp-desc">The permanent historical record — every decision, completed task, and resolved risk, kept forever. Append-only: nothing is ever edited or deleted, only added to.</div>
+      </div>
+    </div>
+
+    <p>When a task completes, it moves <em>out</em> of Active State and <em>into</em> the Decision Archive. When a decision is made, it's logged in the archive. Nothing is lost — the archive is the company's full history, and Active State stays lean by holding only what's live.</p>
+
+    <div class="callout info">
+      <div class="callout-label">Nothing is ever deleted</div>
+      <p>The log update is <strong>additive only</strong>. It never erases anything — completed tasks move to the archive, superseded decisions get a new entry that references the old one, resolved risks are filed rather than removed. Every version of the files is a fuller record than the last, never a replacement that loses history. If you ever can't find something, it's been archived, not deleted.</p>
+    </div>
+  </section>
+
+  <!-- ───────── WHEN IT RUNS ───────── -->
+  <section id="when">
+    <h2>When it <em>runs</em></h2>
+    <p class="lead">After every meeting, once that meeting's MIR has been generated.</p>
+    <p>The order is fixed: <strong>MIR first, then log update.</strong> The MIR is one of the sources the log update reads, and the end of the meeting (the "close") gets recorded too — that's the last 15 minutes of a Thursday or ad hoc session where the team reads the MIR aloud and confirms the decisions and actions. Running the log update after everything is finished means it captures that closing discussion as well as the meeting itself. <em>The <a href="https://epic-comedy-berlin.github.io/ecb-internal/mir-guide.html" style="color:var(--blue);">MIR guide</a> covers that sequence.</em></p>
+    <p>It's not only for meetings, though. Run a log update <strong>any time the files have fallen behind reality</strong> — after a heavy work session, or when a real decision got made in Slack or a chat that the files don't yet reflect. If something changed and the project files don't show it, that's the cue to run one.</p>
+    <p>In practice that means a rough cadence of <strong>twice a week minimum</strong> — once after the Monday stand-up and once after the Thursday session — plus the occasional extra run when an ad hoc session or a big async decision lands in between. It's not a daily chore; it's "whenever the files would otherwise go stale."</p>
+
+    <div class="callout">
+      <div class="callout-label">Where it sits in the cycle</div>
+      <p>Meeting → MIR → <strong>log update</strong> → next agenda. The log update is the step that turns a finished meeting into updated files, so the next agenda is built on current information. Skip it, and the next agenda is working from stale data.</p>
+    </div>
+  </section>
+
+  <!-- ───────── HOW TO RUN ───────── -->
+  <section id="how">
+    <h2>How to <em>run one</em></h2>
+    <p class="lead">Normally Aaron runs this. The flow is: trigger it, let Claude scan, review the summary, confirm, then upload the new files.</p>
+
+    <div class="callout info">
+      <div class="callout-label">Whose job this is</div>
+      <p>The log update is <strong>Aaron's job by default</strong> — he owns the project files and runs the update after meetings, usually the same night. If you're not Aaron, you don't normally need to do this. The one exception — Aaron away, can't wait — is covered at the end of this section under <a href="#fallback" style="color:var(--blue);">running it yourself</a>.</p>
+    </div>
+
+    <div class="flow">
+      <div class="flow-step">
+        <div class="flow-num">STEP 1</div>
+        <div class="flow-label">Trigger it</div>
+        <div class="flow-sub">In a new chat</div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">STEP 2</div>
+        <div class="flow-label">Claude scans</div>
+        <div class="flow-sub">Fireflies, Slack, chats</div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">STEP 3</div>
+        <div class="flow-label">Review summary</div>
+        <div class="flow-sub">What changed</div>
+      </div>
+      <div class="flow-step confirm">
+        <div class="flow-num">STEP 4</div>
+        <div class="flow-label">Confirm</div>
+        <div class="flow-sub">Before any file is built</div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">STEP 5</div>
+        <div class="flow-label">Swap the files</div>
+        <div class="flow-sub">Delete old, then upload new</div>
+      </div>
+    </div>
+
+    <div class="step-block">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <h3>Open a new chat and turn on the connectors</h3>
+        <p>Start a fresh chat in the ECB project. The log update needs <strong>Fireflies</strong> (to read transcripts) and <strong>Zapier</strong> (to scan Slack) turned on. Toggle them on via the <strong>+</strong> → <strong>Connectors</strong>, and off again when you're done. Sonnet is fine. <em>Connector basics are in the <a href="https://epic-comedy-berlin.github.io/ecb-internal/claude-token-guide.html" style="color:var(--blue);">Claude usage guide</a>.</em></p>
+      </div>
+    </div>
+
+    <div class="step-block">
+      <div class="step-num">2</div>
+      <div class="step-content">
+        <h3>Type a trigger phrase</h3>
+        <p>Any of these starts it: <code>run log update</code>, <code>update the log</code>, <code>full scan</code>, <code>do a full scan</code>, or <code>update active state and decision archive</code>. Claude first checks it can reach each source, then scans Fireflies transcripts, all the Slack channels, and recent chats since the last update.</p>
+      </div>
+    </div>
+
+    <div class="step-block">
+      <div class="step-num">3</div>
+      <div class="step-content">
+        <h3>Read the ingestion summary</h3>
+        <p>Before building anything, Claude shows a summary of everything it found: tasks added, updated, or completed; decisions logged; risks changed; any conflicts; and the flags from its scan of the task list. This is your chance to catch anything wrong before it's written. It looks roughly like this:</p>
+
+        <div class="sum-mock">
+          <div class="sum-head">Log update summary — 2 June 2026</div>
+          <div class="sum-body">
+            <div class="sum-row"><span class="sum-k">Sources scanned</span><span class="sum-v">Fireflies (Thu work meeting) · Slack · chats</span></div>
+            <hr class="sum-divider">
+            <div class="sum-row"><span class="sum-k">Tasks added</span><span class="sum-v">1 — ECB-0xxx [new task name]</span></div>
+            <div class="sum-row"><span class="sum-k">Tasks updated</span><span class="sum-v">3 — status changes on three open tasks</span></div>
+            <div class="sum-row"><span class="sum-k">Tasks completed</span><span class="sum-v">1 — confirmed in the meeting transcript</span></div>
+            <div class="sum-row"><span class="sum-k">Decisions logged</span><span class="sum-v">1 — [one-line decision summary]</span></div>
+            <div class="sum-row"><span class="sum-k">Risks added/updated</span><span class="sum-v">1 — [risk summary]</span></div>
+            <div class="sum-row"><span class="sum-k">Conflicts flagged</span><span class="sum-v">0</span></div>
+            <hr class="sum-divider">
+            <div class="sum-flags-label">Active scan flags</div>
+            <div class="sum-flag"><span class="ft">OVERDUE</span> · [task past its deadline]</div>
+            <div class="sum-flag"><span class="ft">BLOCKER</span> · [person waiting on another person for something]</div>
+            <div class="sum-confirm">Review the above. Confirm to generate files, or flag anything to correct first.</div>
+          </div>
+        </div>
+        <p style="font-size:13px; color:var(--mid);">If anything's off — a task marked done that isn't, a decision logged wrong — you catch it here, before any file is written.</p>
+      </div>
+    </div>
+
+    <div class="step-block">
+      <div class="step-num">4</div>
+      <div class="step-content">
+        <h3>Confirm — or correct first</h3>
+        <p>Claude <strong>waits for your okay before generating the files.</strong> If the summary looks right, confirm and it builds them. If something's off, tell Claude what to fix and it re-checks before proceeding. Nothing is written until you've confirmed.</p>
+      </div>
+    </div>
+
+    <div class="step-block">
+      <div class="step-num">5</div>
+      <div class="step-content">
+        <h3>Swap the files — delete the old, then upload the new</h3>
+        <p>Claude produces two updated markdown files — download them, then swap them into the project. <strong>Delete the old versions first, then upload the new ones</strong> — that order avoids any risk of removing the fresh file by accident. The system relies on there being <strong>exactly one</strong> Active State and one Decision Archive file; leaving old copies behind makes Claude read stale data. Here's exactly where to do it.</p>
+      </div>
+    </div>
+
+    <h3 style="margin-top: 8px;">Where the files live</h3>
+    <p>Open the project: click <strong>ECB Company Work</strong> in the left sidebar, or go to <strong>Projects → ECB Company Work</strong>. The project files are in the <strong>Files</strong> panel on the right-hand side.</p>
+
+    <div class="files-mock">
+      <div class="fm-head">
+        <span class="fm-title">Files</span>
+        <span class="fm-plus">+</span>
+      </div>
+      <div class="fm-cap">5% of project capacity used · Search mode</div>
+      <div class="fm-grid">
+        <div class="fm-card highlight">
+          <span class="fm-x">×</span>
+          <div class="fm-name">ECB_Active_State_2026-06-02.md</div>
+          <div class="fm-lines">381 lines</div>
+          <div class="fm-badge">MD</div>
+        </div>
+        <div class="fm-card">
+          <div class="fm-name">ECB_Decision_Archive_2026-06-02.md</div>
+          <div class="fm-lines">448 lines</div>
+          <div class="fm-badge">MD</div>
+        </div>
+        <div class="fm-card">
+          <div class="fm-name">ECB_Master_Context.md</div>
+          <div class="fm-lines">293 lines</div>
+          <div class="fm-badge">MD</div>
+        </div>
+      </div>
+      <div class="fm-caption">To delete: hover over a file card and an <strong>×</strong> appears in the top-left corner (shown above) — click it to remove that file. To add: click the <strong>+</strong> at the top of the Files panel and upload.</div>
+    </div>
+
+    <div class="callout">
+      <div class="callout-label">The upload-and-delete routine</div>
+      <p><strong>1. Delete the old files first.</strong> Hover over the current Active State and Decision Archive cards, and click the <strong>×</strong> on each to remove them. Doing this <em>before</em> uploading means there's only ever one of each file on screen — no risk of deleting the new version by mistake.<br>
+      <strong>2. Upload the new files.</strong> Click <strong>+</strong> on the Files panel and add the two files Claude made.<br>
+      <strong>3. Check the result.</strong> Exactly one <code>ECB_Active_State</code> and one <code>ECB_Decision_Archive</code> should remain. The date in the filename is just for reference — what matters is there's only one of each.</p>
+    </div>
+
+    <div class="callout tip">
+      <div class="callout-label">If nothing changed</div>
+      <p>If the scan finds nothing new since the last update — no new tasks, decisions, completions, or risks — Claude won't generate files for the sake of it. It'll just report that nothing changed and there's nothing to upload. A new file version only appears when something actually moved.</p>
+    </div>
+
+    <h3 style="margin-top: 36px;" id="fallback">If you're not Aaron — running it yourself</h3>
+    <p>This is Aaron's job, and normally you won't need to touch it. The one exception: if <strong>Aaron is away and a log update genuinely can't wait</strong> — a meeting's outcomes need to be in the files before the next session — Ori or Brendan can run it. The steps are exactly the ones above. Two things matter most when you're standing in:</p>
+
+    <div class="callout warning">
+      <div class="callout-label">The two things to get right</div>
+      <p><strong>Review the summary honestly before confirming (step 4).</strong> You're standing in for Aaron — if something looks wrong, don't wave it through. Ask Claude to fix it first.</p>
+      <p><strong>Swap the files in the right order (step 5).</strong> This is the easiest step to get wrong. Delete the old Active State and Decision Archive <em>first</em>, then upload the new ones — so exactly one of each remains and you never risk deleting the fresh version.</p>
+    </div>
+
+    <div class="callout tip">
+      <div class="callout-label">When in doubt, leave it for Aaron</div>
+      <p>If it's not urgent, it waits until Aaron's back. Only run it yourself when the next meeting genuinely needs current files and Aaron can't get to it. Unsure whether it's needed? Ask in #p1-important.</p>
+    </div>
+  </section>
+
+  <!-- ───────── TROUBLESHOOTING ───────── -->
+  <section id="troubleshooting">
+    <h2>If something <em>goes wrong</em></h2>
+
+    <div class="callout warning">
+      <div class="callout-label">Claude says a source is unavailable</div>
+      <p>At the start, Claude checks it can reach Fireflies, Slack, and past chats. If one comes back unavailable, it's almost always a connector that's off — check Fireflies and Zapier are both on, then ask Claude to retry the access check. If a source genuinely can't be reached, Claude will ask whether to proceed without it; only do that if you're confident nothing important is in that source. <em>For Fireflies specifically, the <a href="https://epic-comedy-berlin.github.io/ecb-internal/fireflies-guide.html" style="color:var(--blue);">Fireflies guide</a> covers capture and access.</em></p>
+    </div>
+
+    <div class="callout warning">
+      <div class="callout-label">The summary marks something done that isn't</div>
+      <p>Don't confirm. Tell Claude which task is wrong — it won't mark a P1 task complete without a meeting or transcript confirming it, so if one slipped through, flag it and have Claude correct the summary before generating files.</p>
+    </div>
+
+    <div class="callout warning">
+      <div class="callout-label">There are two of the same file in the project</div>
+      <p>This means an old version wasn't deleted after a previous upload. Keep the newest one (check the date in the filename) and delete the older. The system needs exactly one Active State and one Decision Archive — duplicates cause Claude to read stale data.</p>
+    </div>
+
+    <div class="callout tip">
+      <div class="callout-label">It's been a while since the last update</div>
+      <p>If the files look badly out of date, it likely just means an update was skipped after a recent meeting. Run one now — Claude scans back to the last update date, so it'll catch everything since, not just the most recent meeting.</p>
+    </div>
+  </section>
+
+  <!-- ───────── QUESTIONS ───────── -->
+  <section>
+    <h2>Questions?</h2>
+    <p>The log update is Aaron's area — ask him in <strong>#p1-important</strong>. Related: the <a href="https://epic-comedy-berlin.github.io/ecb-internal/mir-guide.html" style="color:var(--blue);">MIR guide</a> for the report that comes first, the <a href="https://epic-comedy-berlin.github.io/ecb-internal/meeting-agendas-guide.html" style="color:var(--blue);">Meeting Agendas guide</a> for the full meeting cycle this feeds, and the <a href="https://epic-comedy-berlin.github.io/ecb-internal/master-context-guide.html" style="color:var(--blue);">Master Context guide</a> for updating the third project file.</p>
+  </section>
+
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <div>Epic Comedy Berlin · Internal use only · Log Update Guide</div>
+    <div>Updated <span class="accent">June 2026</span></div>
+  </div>
+</footer>
+
+</body>
+</html>

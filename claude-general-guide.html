@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ECB Claude General Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;1,9..144,400&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0c0b0a;
+    --bg: #f5f1ea;
+    --paper: #ffffff;
+    --cream: #ece6db;
+    --gold: #b8893f;
+    --gold-soft: #d4ae6f;
+    --red: #b8453a;
+    --green: #4a7c4e;
+    --blue: #3a6e8f;
+    --ink: #1f1c18;
+    --mid: #6b645b;
+    --line: #d6cfc1;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Inter', -apple-system, sans-serif;
+    font-weight: 400;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ========== HEADER ========== */
+  header {
+    background: var(--black);
+    color: var(--bg);
+    padding: 80px 56px 100px;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute;
+    top: -180px; right: -180px;
+    width: 480px; height: 480px;
+    border: 1px solid rgba(184,137,63,0.18);
+    border-radius: 50%;
+  }
+  header::after {
+    content: '';
+    position: absolute;
+    top: -80px; right: -80px;
+    width: 280px; height: 280px;
+    border: 1px solid rgba(184,137,63,0.1);
+    border-radius: 50%;
+  }
+  .header-inner {
+    max-width: 880px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+  .eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 28px;
+  }
+  header h1 {
+    font-family: 'Fraunces', serif;
+    font-weight: 400;
+    font-size: clamp(40px, 6vw, 64px);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    max-width: 720px;
+  }
+  header h1 em { font-style: italic; color: var(--gold-soft); }
+  .header-sub {
+    margin-top: 28px;
+    font-size: 15px;
+    color: rgba(245,241,234,0.55);
+    max-width: 580px;
+    line-height: 1.7;
+  }
+  .header-pointer {
+    margin-top: 32px;
+    padding: 16px 22px;
+    background: rgba(184,137,63,0.08);
+    border-left: 2px solid var(--gold);
+    color: rgba(245,241,234,0.85);
+    font-size: 14px;
+    max-width: 680px;
+  }
+  .header-pointer strong { color: var(--gold-soft); font-weight: 500; }
+
+  /* ========== MAIN ========== */
+  main {
+    max-width: 880px;
+    margin: -50px auto 0;
+    padding: 0 32px 120px;
+    position: relative;
+  }
+  section {
+    background: var(--paper);
+    margin-bottom: 32px;
+    padding: 56px 64px;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(12,11,10,0.04), 0 12px 40px rgba(12,11,10,0.06);
+  }
+  @media (max-width: 680px) {
+    main { padding: 0 16px 80px; }
+    section { padding: 40px 28px; }
+    header { padding: 60px 24px 90px; }
+  }
+  h2 {
+    font-family: 'Fraunces', serif;
+    font-weight: 400;
+    font-size: 32px;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    margin-bottom: 28px;
+    color: var(--black);
+  }
+  h2 em { font-style: italic; color: var(--gold); }
+  h3 {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 20px;
+    margin-bottom: 12px;
+    color: var(--black);
+  }
+  p {
+    font-size: 16px;
+    color: var(--ink);
+    margin-bottom: 18px;
+    max-width: 64ch;
+  }
+  p.lead { font-size: 18px; line-height: 1.6; }
+  strong { font-weight: 600; color: var(--black); }
+
+  /* ========== RULES (Three things) ========== */
+  .rules {
+    margin: 24px 0 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+  .rule {
+    display: grid;
+    grid-template-columns: 32px 1fr;
+    gap: 16px;
+    align-items: start;
+  }
+  .rule-mark {
+    font-family: 'Fraunces', serif;
+    font-size: 28px;
+    color: var(--gold);
+    line-height: 1;
+    margin-top: -2px;
+  }
+  .rule strong {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 16px;
+  }
+  .rule p {
+    font-size: 14.5px;
+    color: var(--mid);
+    margin: 0 0 8px;
+    line-height: 1.6;
+  }
+  .rule p:last-child { margin-bottom: 0; }
+
+  /* ========== CHATS LIST ========== */
+  .chats-list { margin: 20px 0; }
+  .chat-row {
+    display: grid;
+    grid-template-columns: 110px 1fr;
+    gap: 18px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--line);
+    align-items: baseline;
+  }
+  .chat-row:last-child { border-bottom: none; }
+  .chat-name {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.05em;
+    font-weight: 500;
+    color: var(--gold);
+  }
+  .chat-desc {
+    font-size: 14px;
+    color: var(--mid);
+    line-height: 1.55;
+  }
+  .chat-desc strong { color: var(--ink); font-weight: 500; }
+
+  /* ========== CALLOUTS ========== */
+  .callout {
+    background: var(--cream);
+    border-left: 3px solid var(--gold);
+    padding: 22px 28px;
+    border-radius: 0 4px 4px 0;
+    margin: 24px 0;
+  }
+  .callout.warning { background: #faf0ec; border-left-color: var(--red); }
+  .callout.info { background: #eef2ec; border-left-color: var(--green); }
+  .callout.tip { background: #ecf1f5; border-left-color: var(--blue); }
+  .callout-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    line-height: 1.3;
+  }
+  .callout.warning .callout-label { color: var(--red); }
+  .callout.info .callout-label { color: var(--green); }
+  .callout.tip .callout-label { color: var(--blue); }
+  .callout p { margin-bottom: 10px; font-size: 15px; line-height: 1.65; }
+  .callout p:last-child { margin-bottom: 0; }
+
+  /* ========== STEP BLOCKS ========== */
+  .step-block {
+    background: var(--cream);
+    padding: 22px 26px;
+    border-radius: 4px;
+    margin: 16px 0;
+    display: grid;
+    grid-template-columns: 36px 1fr;
+    gap: 18px;
+    align-items: start;
+  }
+  .step-num {
+    font-family: 'Fraunces', serif;
+    font-size: 26px;
+    color: var(--gold);
+    line-height: 1;
+    margin-top: -2px;
+  }
+  .step-content h3 { margin-bottom: 6px; font-size: 17px; }
+  .step-content p {
+    font-size: 14px;
+    color: var(--mid);
+    margin: 0 0 10px;
+    line-height: 1.6;
+  }
+  .step-content p:last-child { margin-bottom: 0; }
+
+  /* ========== ADHOC EXAMPLES ========== */
+  .adhoc-eg {
+    background: var(--cream);
+    padding: 18px 22px;
+    border-radius: 4px;
+    margin-bottom: 12px;
+  }
+  .adhoc-eg-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .adhoc-eg p { font-size: 14px; margin: 0; line-height: 1.55; }
+  .adhoc-eg em { color: var(--mid); }
+
+  /* ========== TASK BRIEF DEMO ========== */
+  .task-brief-demo {
+    background: var(--black);
+    border-radius: 6px;
+    overflow: hidden;
+    margin: 20px 0;
+  }
+  .task-brief-head {
+    padding: 14px 22px;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--gold);
+    text-transform: uppercase;
+  }
+  .task-brief-body {
+    padding: 20px 22px 24px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px;
+    line-height: 1.85;
+    color: rgba(245,241,234,0.82);
+    white-space: pre-wrap;
+    overflow-x: auto;
+  }
+
+  /* ========== MODELS ========== */
+  .models {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 14px;
+    margin: 24px 0;
+  }
+  @media (max-width: 680px) { .models { grid-template-columns: 1fr; } }
+  .model-card {
+    background: var(--cream);
+    padding: 20px 22px;
+    border-radius: 4px;
+    border-top: 3px solid var(--gold);
+  }
+  .model-card.opus { border-top-color: var(--red); }
+  .model-card.haiku { border-top-color: var(--green); }
+  .model-name {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 18px;
+    color: var(--black);
+    margin-bottom: 4px;
+  }
+  .model-tagline {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  .model-card.opus .model-tagline { color: var(--red); }
+  .model-card.haiku .model-tagline { color: var(--green); }
+  .model-card p {
+    font-size: 13.5px;
+    color: var(--mid);
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  /* ========== TOKEN COST BARS ========== */
+  .token-cost {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin: 20px 0 12px;
+  }
+  .token-row {
+    display: grid;
+    grid-template-columns: 110px 1fr 50px 1fr;
+    gap: 16px;
+    align-items: center;
+    padding: 12px 18px;
+    background: var(--cream);
+    border-radius: 4px;
+  }
+  @media (max-width: 680px) {
+    .token-row { grid-template-columns: 1fr; gap: 6px; padding: 14px 18px; }
+  }
+  .token-name {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 16px;
+    color: var(--ink);
+  }
+  .token-bar {
+    height: 8px;
+    background: rgba(12,11,10,0.06);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .token-fill {
+    height: 100%;
+    border-radius: 4px;
+  }
+  .haiku-row .token-fill { background: var(--green); }
+  .sonnet-row .token-fill { background: var(--gold); }
+  .opus-row .token-fill { background: var(--red); }
+  .token-mult {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink);
+  }
+  .haiku-row .token-mult { color: var(--green); }
+  .sonnet-row .token-mult { color: var(--gold); }
+  .opus-row .token-mult { color: var(--red); }
+  .token-note {
+    font-size: 12.5px;
+    color: var(--mid);
+    line-height: 1.4;
+  }
+
+  /* ========== MID-CHAT PATTERN ========== */
+  .midchat-pattern {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin: 20px 0 12px;
+  }
+  .midchat-step {
+    background: var(--cream);
+    padding: 18px 22px;
+    border-radius: 4px;
+    border-left: 3px solid var(--gold);
+  }
+  .midchat-tag {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 17px;
+    color: var(--black);
+    margin-bottom: 6px;
+  }
+  .midchat-step p {
+    font-size: 14.5px;
+    color: var(--mid);
+    margin: 0;
+    line-height: 1.6;
+  }
+
+  /* ========== SLACK EXAMPLES ========== */
+  .slack-examples {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 20px 0;
+  }
+  .slack-msg {
+    background: var(--cream);
+    border-radius: 4px;
+    padding: 14px 18px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--ink);
+    line-height: 1.55;
+  }
+  .slack-msg .ch {
+    display: inline-block;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  /* ========== FOOTER ========== */
+  footer {
+    background: var(--black);
+    color: rgba(245,241,234,0.4);
+    padding: 36px 56px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.05em;
+  }
+  .footer-inner {
+    max-width: 880px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  footer .accent { color: var(--gold); }
+  .starthere {
+    background: #ecf1f5;
+    border: 1px solid #cdddea;
+    border-radius: 6px;
+    padding: 18px 24px;
+    margin: 0 0 8px;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+  .starthere .sh-icon { font-size: 18px; line-height: 1.5; }
+  .starthere p { margin: 0; font-size: 14.5px; color: var(--ink); max-width: none; }
+  .starthere strong { color: var(--blue); }
+  .toc {
+    margin: 28px 0 4px;
+    background: var(--cream);
+    border-radius: 6px;
+    padding: 22px 26px;
+  }
+  .toc-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 16px;
+  }
+  .toc-links {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-auto-flow: row;
+    gap: 2px 28px;
+  }
+  @media (max-width: 680px) { .toc-links { grid-template-columns: 1fr; } }
+  .toc-links a {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    font-size: 15px;
+    color: var(--ink);
+    text-decoration: none;
+    padding: 9px 10px 9px 0;
+    border-bottom: 1px solid rgba(184,137,63,0.15);
+    transition: color 0.15s, padding-left 0.15s;
+  }
+  .toc-links a:hover { color: var(--gold); padding-left: 6px; }
+  .toc-links a .toc-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--gold);
+    flex-shrink: 0;
+    min-width: 18px;
+  }
+  .toc-links a .toc-arrow {
+    margin-left: auto;
+    color: var(--gold-soft);
+    font-size: 13px;
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+  .toc-links a:hover .toc-arrow { opacity: 1; }
+  .nav-back { max-width: 880px; margin: 0 auto; padding: 24px 32px 0; }
+  .nav-back a {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold);
+    text-decoration: none;
+    opacity: 0.7;
+    transition: opacity 0.15s;
+  }
+  .nav-back a:hover { opacity: 1; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="eyebrow">Epic Comedy Berlin · Internal Guides</div>
+    <h1>How <em>Claude</em> works at ECB.</h1>
+    <p class="header-sub">Read this once when you start. Come back when you're stuck, when you want to do something off-list, or when something's not working as expected.</p>
+    <div class="header-pointer">
+      <strong>Working through your task list today?</strong> Use the <a href="https://epic-comedy-berlin.github.io/ecb-internal/claude-task-guide.html" style="color:var(--gold-soft);"><em>Task Guide</em></a> for the daily workflow. This guide is for orientation and anything outside the task system.
+    </div>
+  </div>
+</header>
+
+<div class="nav-back">
+  <a href="https://epic-comedy-berlin.github.io/ecb-internal/">← Back to all guides</a>
+</div>
+
+<main>
+
+  <!-- ───────── START HERE ───────── -->
+  <section>
+    <div class="starthere">
+      <span class="sh-icon">👋</span>
+      <p><strong>First time?</strong> Read this through, top to bottom — it's the overview of how Claude works at ECB. Already know the basics and just need something specific? Jump to a section below. For the day-to-day task flow, see the <a href="https://epic-comedy-berlin.github.io/ecb-internal/claude-task-guide.html" style="color:var(--blue);">Task Guide</a>.</p>
+    </div>
+
+    <div class="toc">
+      <div class="toc-label">On this page</div>
+      <div class="toc-links">
+        <a href="#intro"><span class="toc-num">01</span>Three things to know<span class="toc-arrow">→</span></a>
+        <a href="#files"><span class="toc-num">02</span>What Claude reads about ECB<span class="toc-arrow">→</span></a>
+        <a href="#responds"><span class="toc-num">03</span>How Claude responds<span class="toc-arrow">→</span></a>
+        <a href="#models"><span class="toc-num">04</span>The models<span class="toc-arrow">→</span></a>
+        <a href="#team"><span class="toc-num">05</span>Coordinating with the team<span class="toc-arrow">→</span></a>
+        <a href="#offlist"><span class="toc-num">06</span>Work outside the task system<span class="toc-arrow">→</span></a>
+        <a href="#chats"><span class="toc-num">07</span>The other chats in the sidebar<span class="toc-arrow">→</span></a>
+        <a href="#wrong"><span class="toc-num">08</span>If something looks wrong<span class="toc-arrow">→</span></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────── THREE THINGS ───────── -->
+  <section id="intro">
+    <h2>Three things to know about <em>Claude</em></h2>
+    <p>Read this once before you start. It saves you confusion later.</p>
+
+    <div class="rules">
+      <div class="rule">
+        <div class="rule-mark">¹</div>
+        <div>
+          <strong>Claude doesn't run in the background</strong>
+          <p>It's not a bot. It doesn't check Slack, send reminders, or update files on its own. Everything happens when someone opens a chat and prompts it.</p>
+        </div>
+      </div>
+      <div class="rule">
+        <div class="rule-mark">²</div>
+        <div>
+          <strong>Each chat is independent</strong>
+          <p>What you say in chat A doesn't appear in chat B. So if you start a new chat with a question, Claude doesn't automatically know what you said in last week's chat.</p>
+          <p>That said: chats persist if you go back to them — close a chat and reopen it later, your conversation is still there. And Claude can search your past chats if you ask it to. So nothing's lost — it just isn't loaded automatically.</p>
+          <p>What IS loaded automatically: the three project files Aaron maintains (covered in the next section). Every fresh chat in the ECB project reads them at the start. That's why "fresh chats matter" — they always reflect the latest version of those files.</p>
+        </div>
+      </div>
+      <div class="rule">
+        <div class="rule-mark">³</div>
+        <div>
+          <strong>Claude can be wrong — push back</strong>
+          <p>Sometimes Claude states something specific that contradicts what you know. It might invent a fact, misremember a previous decision, or recommend something that goes against ECB strategy. Don't accept it just because it sounds confident. You know ECB better than the chat does.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────── WHAT CLAUDE READS ───────── -->
+  <section id="files">
+    <h2>What Claude reads to know <em>about ECB</em></h2>
+    <p>When you start a fresh chat in the ECB Company Work project, Claude automatically loads three living files Aaron maintains. These are Claude's "memory" of ECB:</p>
+
+    <div class="chats-list">
+      <div class="chat-row">
+        <div class="chat-name">Active State</div>
+        <div class="chat-desc">The current task list. Open tasks, who owns them, current statuses, active risks, pending decisions, next meetings. This is what your briefing comes from. Kept current by the <a href="https://epic-comedy-berlin.github.io/ecb-internal/log-tracker-guide.html" style="color:var(--blue);">log update</a> after every meeting.</div>
+      </div>
+      <div class="chat-row">
+        <div class="chat-name">Master Context</div>
+        <div class="chat-desc">The slow-moving facts about ECB — shows, team, brand, venues, infrastructure, strategic principles. The "what ECB is" file. Updated only on big shifts, via the <a href="https://epic-comedy-berlin.github.io/ecb-internal/master-context-guide.html" style="color:var(--blue);">Master Context update</a>.</div>
+      </div>
+      <div class="chat-row">
+        <div class="chat-name">Decision Archive</div>
+        <div class="chat-desc">Append-only history. Every decision made, meeting summary, document correction. The "why we got here" file. Read by Claude only when historical context is needed.</div>
+      </div>
+    </div>
+
+    <p style="margin-top: 20px;">If something in your briefing looks out of date, the file is out of date. Tell Aaron in <strong>#p0-tasks</strong> and he'll fix it.</p>
+  </section>
+
+  <!-- ───────── HOW CLAUDE RESPONDS ───────── -->
+  <section id="responds">
+    <h2>How Claude <em>responds</em></h2>
+    <p>Claude leads with the answer. For any substantive response — a recommendation, an analysis, a decision call — the first sentence or short paragraph contains the bottom line: what you need to know if you read nothing else. Reasoning, caveats, and detail follow underneath. If you're skimming, the top is enough.</p>
+
+    <p>Claude also defaults to the <strong>laziest viable approach</strong> that still answers the question. Smaller test budgets, fewer cells, shorter timeframes, simpler tools. Only scaling up when the small version proves the point. So if you ask for a plan, expect the minimum-viable version first, not a maximum-rigorous one.</p>
+
+    <div class="callout tip">
+      <div class="callout-label">If a response is too long or buries the answer</div>
+      <p>Push back. Useful one-liners: <em>"Lead with the bottom line"</em> · <em>"Just the verdict, please"</em> · <em>"Cut it down — what's the actual recommendation?"</em></p>
+      <p>Claude will trim and re-front-load. You don't have to read paragraphs to find the point.</p>
+    </div>
+  </section>
+
+  <!-- ───────── MODELS — full reference with tokens ───────── -->
+  <section id="models">
+    <h2>The <em>models</em></h2>
+    <p>Claude comes in three tiers — a fast one, an everyday one, and a heavy one. The version numbers below are the current line-up and will change as Anthropic releases new ones, but the <em>roles</em> stay the same: there's always a default daily driver, a deeper one for hard work, and a quick one for simple lookups. Default is the everyday tier — <strong>Sonnet 4.6</strong> today. Claude tells you when to switch as part of any task it gives you, so you don't have to track the names yourself.</p>
+
+    <div class="models">
+      <div class="model-card">
+        <div class="model-name">Sonnet 4.6</div>
+        <div class="model-tagline">Default · Daily driver</div>
+        <p>For almost everything. Briefings, writing, drafts, social, email, research. Start here.</p>
+      </div>
+      <div class="model-card opus">
+        <div class="model-name">Opus 4.8</div>
+        <div class="model-tagline">Heavy lifting</div>
+        <p>For deep work — contract review, complex strategy, long document analysis, anything that needs sustained reasoning.</p>
+      </div>
+      <div class="model-card haiku">
+        <div class="model-name">Haiku 4.5</div>
+        <div class="model-tagline">Fast & simple</div>
+        <p>For quick lookups or simple questions. Rarely the right pick for ECB work.</p>
+      </div>
+    </div>
+
+    <h3 style="margin-top: 36px;">How tokens work — and why it matters for our shared account</h3>
+    <p>Every message you send and every response Claude gives uses <strong>tokens</strong> (think of tokens as small chunks of text — roughly ¾ of a word each). Our Max plan has a token budget that resets every five hours. <strong>The whole team shares one account</strong>, so if one person burns through the limit on the wrong model, everyone is locked out until the reset.</p>
+
+    <p>The three models don't cost the same per token. Approximate ratios:</p>
+
+    <div class="token-cost">
+      <div class="token-row haiku-row">
+        <div class="token-name">Haiku 4.5</div>
+        <div class="token-bar"><div class="token-fill" style="width: 12%;"></div></div>
+        <div class="token-mult">1×</div>
+        <div class="token-note">Cheapest per token</div>
+      </div>
+      <div class="token-row sonnet-row">
+        <div class="token-name">Sonnet 4.6</div>
+        <div class="token-bar"><div class="token-fill" style="width: 36%;"></div></div>
+        <div class="token-mult">~3×</div>
+        <div class="token-note">Three times Haiku's cost</div>
+      </div>
+      <div class="token-row opus-row">
+        <div class="token-name">Opus 4.8</div>
+        <div class="token-bar"><div class="token-fill" style="width: 60%;"></div></div>
+        <div class="token-mult">~5×</div>
+        <div class="token-note">Five times Haiku's cost — and Opus tends to "think" longer too</div>
+      </div>
+    </div>
+
+    <p style="margin-top: 16px;">So an Opus chat doesn't just cost ~5× per token — Opus also generates more "thinking" tokens internally for deep reasoning. In practice a long Opus session can chew through 10× what the same conversation on Sonnet would cost. <strong>Use Opus when the task genuinely needs it. Default to Sonnet for everything else.</strong></p>
+
+    <div class="callout warning">
+      <div class="callout-label">What burns tokens fastest</div>
+      <p><strong>Long chats.</strong> Every new message re-processes the entire chat history. A 30-message chat costs more per turn than a 5-message one. Start a fresh chat for each new task.</p>
+      <p><strong>Wrong model for the job.</strong> Running simple admin on Opus burns 5× the tokens for zero quality gain.</p>
+      <p><strong>Pasting whole documents repeatedly.</strong> A PDF or long doc gets re-read with every message until you start a new chat.</p>
+    </div>
+
+    <h3 style="margin-top: 36px;">How to switch models</h3>
+    <p>Look at the bottom of the chat input box (where you type). You'll see the current model name (e.g. <em>"Claude Sonnet 4.6"</em>) with a small dropdown arrow next to it. Click the model name, pick the model you want from the dropdown, then send your next message. The change applies from your next message onwards — your conversation history is preserved.</p>
+
+    <h3 style="margin-top: 36px;">Should you switch models mid-chat?</h3>
+    <p class="lead">Usually no. For most ECB work, pick one model and stay there.</p>
+    <p>Switching mid-chat <em>is</em> possible — your conversation carries over — but it isn't free: the new model re-reads the whole chat history before responding, billed at its rate. So switching frequently is wasteful. The honest rule: <strong>default to Sonnet 4.6 and stay there.</strong> The one time a switch earns its cost is when Claude told you to start on Opus for genuine deep thinking <em>and</em> that phase is clearly over with real execution work still ahead — then drop back to Sonnet, once.</p>
+
+    <div class="callout">
+      <div class="callout-label">The one-line rule</div>
+      <p><strong>Default Sonnet 4.6 for the whole chat.</strong> The only time switching makes sense is when (a) Claude explicitly told you to start on Opus for genuine deep thinking, AND (b) the heavy thinking phase is clearly over and you've still got significant execution work ahead. Then drop back to Sonnet, once. Otherwise, stay where you are.</p>
+    </div>
+
+    <p style="margin-top: 20px;">The full breakdown — the worth-it and not-worth-it patterns, connectors, the five-hour window, and the pre-meeting rule — is in the <a href="https://epic-comedy-berlin.github.io/ecb-internal/claude-token-guide.html" style="color:var(--blue);">Shared Account guide</a>. This section is just the essentials.</p>
+  </section>
+
+  <!-- ───────── COORDINATION & SHARED LIMITS ───────── -->
+  <section id="team">
+    <h2>Coordinating with <em>the team</em></h2>
+    <p class="lead">Because we share one Max plan, your model choices and chat habits affect everyone. A few simple rules keep the team unblocked.</p>
+
+    <div class="callout warning">
+      <div class="callout-label">Channel discipline — read this first</div>
+      <p><strong>#p0-tasks is for tasks ONLY.</strong> Task completion handoffs, status updates on specific tasks, task-related questions. Nothing else.</p>
+      <p><strong>Everything else goes in #p1-important.</strong> Heads-up posts, dependency flags, coordination, decisions, things people need to know but that aren't tasks themselves. All the slack examples below go in #p1-important — not #p0-tasks.</p>
+      <p style="font-size:14px;"><em>Full channel map and how Slack works at ECB: the <a href="https://epic-comedy-berlin.github.io/ecb-internal/slack-guide.html" style="color:var(--blue);">Slack guide</a>.</em></p>
+    </div>
+
+    <h3 style="margin-top: 28px;">If you have a time-sensitive task that blocks others</h3>
+    <p>Post in <strong>#p1-important</strong> before you start. Format:</p>
+
+    <div class="slack-examples">
+      <div class="slack-msg">
+        <div class="ch">#p1-important</div>
+        Heads up — I'm starting a heavy contract review now (Opus, probably 1–2 hours of heavy use). Brendan needs the output by Thursday morning. If you're planning anything heavy in the next few hours, let me know so we can sequence it.
+      </div>
+    </div>
+
+    <p>This isn't about asking permission — it's about making sure the rest of the team knows the limit might be tight, so nobody else fires off a low-urgency Opus session and locks the whole account out for five hours.</p>
+
+    <h3 style="margin-top: 28px;">If someone else has flagged a heavy task</h3>
+    <p>Hold off on your own non-urgent heavy work until they're done. Sonnet stuff is usually fine — the limit handles parallel Sonnet work much better than parallel Opus work. The thing to avoid is two people running simultaneous Opus sessions on time-sensitive deliverables.</p>
+
+    <h3 style="margin-top: 28px;">After meetings — flag what needs doing and when</h3>
+    <p>If a meeting produces work that someone else is blocked on, post the dependency clearly in <strong>#p1-important</strong>:</p>
+
+    <div class="slack-examples">
+      <div class="slack-msg">
+        <div class="ch">#p1-important</div>
+        From today's meeting — I need the venue research finished by Wednesday so Ori can pitch on Thursday. Ori, this is on you. Flag if you can't hit Wednesday and we'll re-plan.
+      </div>
+      <div class="slack-msg">
+        <div class="ch">#p1-important</div>
+        Reminder: my contract review is the blocker for Brendan's Thursday call. Aiming to finish by Wednesday EOD. Will post here when done.
+      </div>
+    </div>
+
+    <p>The rule: <strong>if your work blocks someone else's, name the dependency explicitly</strong>. Don't assume people remember from the meeting. The chain only moves if everyone knows where they are in it.</p>
+
+    <div class="callout warning">
+      <div class="callout-label">If the limit hits</div>
+      <p>Claude tells you when the next reset window opens (usually 5 hours from when you hit the cap). Post in <strong>#p1-important</strong> immediately so nobody else tries to use the account in that window. Plan around the reset — non-urgent stuff can wait, time-sensitive work moves to the front of the queue once the cap clears.</p>
+    </div>
+  </section>
+
+  <!-- ───────── OFF-LIST WORK ───────── -->
+  <section id="offlist">
+    <h2>Doing work <em>outside the task system</em></h2>
+    <p class="lead">Sometimes you want to do something that isn't on your task list — brainstorm an idea, ask a one-off question, draft something quick, think through a creative thought. The task-briefing flow doesn't fit. Here's the alternative.</p>
+
+    <p><strong>Lyra is a prompt specialist</strong> — a saved chat in your sidebar called <strong>LYRA</strong> that turns rough requests into precision-crafted prompts. It's the same Lyra you use for complex tasks in the Task Guide, but for off-list work you skip the briefing chat entirely and go straight to it.</p>
+
+    <h3 style="margin-top: 28px;">When to use this path</h3>
+
+    <div class="adhoc-eg">
+      <div class="adhoc-eg-label">Use case 1 — Brainstorming</div>
+      <p>You want to think through an idea that isn't a current task. <em>"Help me come up with show titles for a Tuesday improv format"</em> or <em>"What angles could we try for a Wise Fools episode about free will?"</em></p>
+    </div>
+
+    <div class="adhoc-eg">
+      <div class="adhoc-eg-label">Use case 2 — Quick ad-hoc question</div>
+      <p>You have a one-off question that doesn't fit "pick a P1/P2 task." <em>"What's the best time of day to post on TikTok for our audience?"</em> or <em>"Help me write a polite reply to a comedian asking for stage time."</em></p>
+    </div>
+
+    <div class="adhoc-eg">
+      <div class="adhoc-eg-label">Use case 3 — Drafting something off-list</div>
+      <p>You need a tweet, an Instagram caption, a quick email, a creative pitch — anything not on the formal task list. <em>"Draft 5 versions of an Instagram caption for the bit about Brendan misreading 'Ausgang'."</em></p>
+    </div>
+
+    <h3 style="margin-top: 32px;">The process</h3>
+
+    <div class="step-block">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <h3>Decide what you want to do</h3>
+        <p>Be rough about it. You don't need to clean it up — that's what Lyra is for.</p>
+      </div>
+    </div>
+
+    <div class="step-block">
+      <div class="step-num">2</div>
+      <div class="step-content">
+        <h3>Open the LYRA chat</h3>
+        <p>Find <strong>LYRA</strong> in the Starred section of the sidebar. Click it.</p>
+      </div>
+    </div>
+
+    <div class="step-block">
+      <div class="step-num">3</div>
+      <div class="step-content">
+        <h3>Type BASIC or DETAIL + your request</h3>
+        <p>Start with the trigger word, then describe what you want in plain language.</p>
+        <p style="margin-top: 10px;"><strong>BASIC</strong> — quick optimisation. Use for everyday off-list stuff. Lyra returns a polished prompt right away.</p>
+        <p><strong>DETAIL</strong> — for high-stakes work where the framing matters. Lyra builds a more comprehensive, carefully-scoped prompt. It will ask clarifying questions <em>only if it needs missing context</em> — most of the time it just returns the optimised prompt straight away.</p>
+      </div>
+    </div>
+
+    <div class="task-brief-demo">
+      <div class="task-brief-head">Example — BASIC request</div>
+<div class="task-brief-body">BASIC using Claude — give me 5 angles for a TikTok
+caption about a comedian who can't read German signs.
+ECB tone — punchy, not corporate.</div>
+    </div>
+
+    <div class="task-brief-demo">
+      <div class="task-brief-head">Example — DETAIL request</div>
+<div class="task-brief-body">DETAIL using Claude — help me think through whether
+ECB should pitch a corporate comedy package to the Berlin
+tech sector. We've had requests but no formal offering yet.</div>
+    </div>
+
+    <div class="step-block">
+      <div class="step-num">4</div>
+      <div class="step-content">
+        <h3>Copy the optimised prompt</h3>
+        <p>Lyra outputs a <em>"Your Optimized Prompt:"</em> block. Copy the whole thing.</p>
+      </div>
+    </div>
+
+    <div class="step-block">
+      <div class="step-num">5</div>
+      <div class="step-content">
+        <h3>Open a NEW chat in ECB Company Work</h3>
+        <p>Important — this is different from the task flow. Don't use a briefing chat (those are task-specific). Go to <strong>ECB Company Work</strong> in the Starred section of your sidebar and start a fresh chat.</p>
+      </div>
+    </div>
+
+    <div class="step-block">
+      <div class="step-num">6</div>
+      <div class="step-content">
+        <h3>Switch the model if needed</h3>
+        <p>Most off-list work runs fine on <strong>Sonnet 4.6</strong>. If you're doing something complex (deep strategic thinking, long-form writing, contract-style analysis), switch to <strong>Opus 4.8</strong>: click the model name at the bottom of the chat input box, pick the model from the dropdown.</p>
+      </div>
+    </div>
+
+    <div class="step-block">
+      <div class="step-num">7</div>
+      <div class="step-content">
+        <h3>Paste and send</h3>
+        <p>Paste the optimised prompt. Hit enter. Claude takes it from there — same guided behaviour as a normal task.</p>
+      </div>
+    </div>
+
+    <div class="callout tip">
+      <div class="callout-label">If anything useful comes out of it</div>
+      <p>There's no Slack handoff for off-list work since it isn't in the task system. But if something comes out of your chat that should become a real task, decision, or strategy direction, post it in <strong>#p0-tasks</strong> or <strong>#p1-important</strong> so Aaron can capture it. Otherwise it disappears with the chat.</p>
+    </div>
+  </section>
+
+  <!-- ───────── OTHER CHATS ───────── -->
+  <section id="chats">
+    <h2>The <em>other chats</em> in the sidebar</h2>
+    <p>You'll see a few other items in the Starred section. The one you'll use is <strong>LYRA</strong>; the rest are Aaron's, and you don't need to touch them. Here's what each one is so you know what's what.</p>
+
+    <div class="chats-list">
+      <div class="chat-row">
+        <div class="chat-name">LYRA</div>
+        <div class="chat-desc"><strong>You'll use this.</strong> The prompt specialist — turns rough requests into precision-crafted prompts. Used in the task workflow (Step 5) and for off-list work. <strong>Also handy for any deeper research task</strong> — set up the prompt in LYRA, then run the optimised version in a fresh ECB Company Work chat.</div>
+      </div>
+      <div class="chat-row">
+        <div class="chat-name">MA / MIR / LOG</div>
+        <div class="chat-desc">Aaron's older working chats — don't post in them. <strong>Note:</strong> meeting agendas, MIRs, and log updates are no longer run from these dedicated chats. Each now runs in a fresh chat inside <strong>ECB Company Work</strong>, triggered by a phrase. See the <a href="https://epic-comedy-berlin.github.io/ecb-internal/meeting-agendas-guide.html" style="color:var(--blue);">Meeting Agendas</a>, <a href="https://epic-comedy-berlin.github.io/ecb-internal/mir-guide.html" style="color:var(--blue);">MIR</a>, and <a href="https://epic-comedy-berlin.github.io/ecb-internal/log-tracker-guide.html" style="color:var(--blue);">Log Update</a> guides for how each one works now.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────── IF SOMETHING'S WRONG ───────── -->
+  <section id="wrong">
+    <h2>If something looks <em>wrong</em></h2>
+
+    <div class="callout warning">
+      <div class="callout-label">If your briefing seems off</div>
+      <p>You completed a task but it's still showing as open. Or a task is missing. Or a status looks stale.</p>
+      <p><strong>What to do:</strong> Post in <strong>#p0-tasks</strong> with the correction. Aaron updates the task file. Your next fresh briefing reflects the fix.</p>
+      <p><strong>Don't try to maintain the system yourself.</strong> The chat is for doing work — Aaron handles file maintenance.</p>
+    </div>
+
+    <div class="callout warning">
+      <div class="callout-label">If Claude says something that doesn't match what you know</div>
+      <p>Claude can be wrong mid-task. It might invent a fact, misremember a previous decision, or recommend something that contradicts known ECB strategy.</p>
+      <p><strong>Push back.</strong> Tell Claude: <em>"That doesn't sound right — verify it"</em> or <em>"That contradicts X, please correct."</em> Don't just accept what it says because it sounds confident.</p>
+    </div>
+
+    <div class="callout warning">
+      <div class="callout-label">If the optimised prompt from Lyra feels off</div>
+      <p>Lyra is good but not infallible. If the optimised prompt seems to miss the point of what you wanted, paste it back into Lyra with a note like <em>"This is missing X — try again."</em> Better to iterate than run a prompt that won't deliver.</p>
+    </div>
+
+    <div class="callout tip">
+      <div class="callout-label">Always make Claude check its own work</div>
+      <p>For anything important — a draft going out, a decision recommendation, a plan, a contract analysis, a final deliverable — explicitly ask Claude to verify before you use it.</p>
+      <p>Useful prompts: <em>"Check your work — list every requirement I gave you and confirm each one is covered"</em> or <em>"Verify the facts in this draft against the project files"</em> or <em>"Is anything in this output unsupported or guessed?"</em></p>
+      <p>Claude will often catch its own errors when asked to look. It just doesn't always do it on its own. Two minutes of self-check saves an hour of fixing something later.</p>
+    </div>
+  </section>
+
+  <!-- ───────── QUESTIONS ───────── -->
+  <section>
+    <h2>Questions?</h2>
+    <p>Ask Aaron in <strong>#p1-important</strong> or <strong>#p2-general</strong>. If you get stuck mid-task, you can also just ask Claude — it knows the system.</p>
+    <p style="font-size: 14px; color: var(--mid);">Related guides: the <a href="https://epic-comedy-berlin.github.io/ecb-internal/claude-task-guide.html" style="color:var(--blue);">Task guide</a> for the day-to-day task flow, and the <a href="https://epic-comedy-berlin.github.io/ecb-internal/claude-token-guide.html" style="color:var(--blue);">Shared Account guide</a> for keeping the account usable for everyone.</p>
+  </section>
+
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <div>Epic Comedy Berlin · Internal use only · General Guide</div>
+    <div>Updated <span class="accent">June 2026</span></div>
+  </div>
+</footer>
+
+</body>
+</html>

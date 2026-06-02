@@ -1,0 +1,1166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ECB Claude Task Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;1,9..144,400&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0c0b0a;
+    --bg: #f5f1ea;
+    --paper: #ffffff;
+    --cream: #ece6db;
+    --gold: #b8893f;
+    --gold-soft: #d4ae6f;
+    --red: #b8453a;
+    --green: #4a7c4e;
+    --blue: #3a6e8f;
+    --ink: #1f1c18;
+    --mid: #6b645b;
+    --line: #d6cfc1;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Inter', -apple-system, sans-serif;
+    font-weight: 400;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ========== HEADER ========== */
+  header {
+    background: var(--black);
+    color: var(--bg);
+    padding: 80px 56px 100px;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute;
+    top: -180px; right: -180px;
+    width: 480px; height: 480px;
+    border: 1px solid rgba(184,137,63,0.18);
+    border-radius: 50%;
+  }
+  header::after {
+    content: '';
+    position: absolute;
+    top: -80px; right: -80px;
+    width: 280px; height: 280px;
+    border: 1px solid rgba(184,137,63,0.1);
+    border-radius: 50%;
+  }
+  .header-inner {
+    max-width: 880px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+  .eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 28px;
+  }
+  header h1 {
+    font-family: 'Fraunces', serif;
+    font-weight: 400;
+    font-size: clamp(40px, 6vw, 64px);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    max-width: 720px;
+  }
+  header h1 em { font-style: italic; color: var(--gold-soft); }
+  .header-sub {
+    margin-top: 28px;
+    font-size: 15px;
+    color: rgba(245,241,234,0.55);
+    max-width: 580px;
+    line-height: 1.7;
+  }
+  .header-pointer {
+    margin-top: 32px;
+    padding: 16px 22px;
+    background: rgba(184,137,63,0.08);
+    border-left: 2px solid var(--gold);
+    color: rgba(245,241,234,0.85);
+    font-size: 14px;
+    max-width: 680px;
+  }
+  .header-pointer strong { color: var(--gold-soft); font-weight: 500; }
+
+  /* ========== MAIN ========== */
+  main {
+    max-width: 880px;
+    margin: -50px auto 0;
+    padding: 0 32px 120px;
+    position: relative;
+  }
+  section {
+    background: var(--paper);
+    margin-bottom: 32px;
+    padding: 56px 64px;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(12,11,10,0.04), 0 12px 40px rgba(12,11,10,0.06);
+  }
+  @media (max-width: 680px) {
+    main { padding: 0 16px 80px; }
+    section { padding: 40px 28px; }
+    header { padding: 60px 24px 90px; }
+  }
+  h2 {
+    font-family: 'Fraunces', serif;
+    font-weight: 400;
+    font-size: 32px;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    margin-bottom: 28px;
+    color: var(--black);
+  }
+  h2 em { font-style: italic; color: var(--gold); }
+  h3 {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 20px;
+    margin-bottom: 12px;
+    color: var(--black);
+  }
+  p {
+    font-size: 16px;
+    color: var(--ink);
+    margin-bottom: 18px;
+    max-width: 64ch;
+  }
+  p.lead { font-size: 18px; line-height: 1.6; }
+  strong { font-weight: 600; color: var(--black); }
+
+  /* ========== QUICK REFERENCE ========== */
+  .quick-ref {
+    background: #1a1814;
+    color: var(--bg);
+  }
+  .qr-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  .quick-ref h2 { color: var(--bg); margin-bottom: 22px; }
+  .quick-ref h2 em { color: var(--gold-soft); }
+  .qr-list {
+    color: rgba(245,241,234,0.85);
+    padding-left: 24px;
+    margin: 0;
+    font-size: 15px;
+    line-height: 2;
+    max-width: 64ch;
+  }
+  .qr-list li { padding-left: 8px; margin-bottom: 2px; }
+  .qr-list strong { color: var(--gold-soft); font-weight: 500; }
+
+  /* ========== FLOW DIAGRAM (with fork) ========== */
+  /* ========== FLOW DIAGRAM ========== */
+  .flow {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 0;
+    margin: 36px 0 12px;
+    align-items: stretch;
+  }
+  @media (max-width: 900px) {
+    .flow { grid-template-columns: 1fr; gap: 8px; }
+  }
+  .flow-step {
+    background: var(--cream);
+    padding: 16px 8px;
+    text-align: center;
+    position: relative;
+    border-radius: 3px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 96px;
+  }
+  .flow-step.optional {
+    background: #f7eee0;
+    border: 1px dashed var(--gold-soft);
+  }
+  .flow-step:not(:last-child)::after {
+    content: '→';
+    position: absolute;
+    right: -10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--gold);
+    font-size: 16px;
+    font-weight: 500;
+    background: var(--paper);
+    padding: 0 4px;
+    z-index: 2;
+  }
+  @media (max-width: 900px) {
+    .flow-step:not(:last-child)::after {
+      content: '↓';
+      right: 50%;
+      top: auto;
+      bottom: -16px;
+      transform: translateX(50%);
+    }
+  }
+  .flow-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    color: var(--gold);
+    margin-bottom: 6px;
+    letter-spacing: 0.1em;
+  }
+  .flow-label {
+    font-family: 'Inter', sans-serif;
+    font-size: 11.5px;
+    font-weight: 500;
+    color: var(--ink);
+    line-height: 1.3;
+  }
+  .flow-step.optional .flow-num { color: var(--gold-soft); }
+
+  /* ========== SIDEBAR DEMO ========== */
+  .sidebar-demo {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    gap: 32px;
+    align-items: start;
+    margin: 24px 0 8px;
+    background: var(--cream);
+    padding: 28px;
+    border-radius: 4px;
+  }
+  @media (max-width: 680px) {
+    .sidebar-demo { grid-template-columns: 1fr; }
+  }
+  .fake-sidebar {
+    background: #1a1814;
+    border-radius: 6px;
+    padding: 16px 12px;
+    color: rgba(245,241,234,0.7);
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+  }
+  .fake-sidebar-logo {
+    font-family: 'Fraunces', serif;
+    font-size: 14px;
+    color: var(--bg);
+    padding: 4px 8px 14px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    margin-bottom: 12px;
+  }
+  .fake-sidebar-item {
+    padding: 6px 10px;
+    border-radius: 4px;
+    margin-bottom: 1px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .fake-sidebar-item .dot {
+    width: 4px; height: 4px;
+    background: rgba(255,255,255,0.3);
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .fake-sidebar-section {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    color: rgba(255,255,255,0.35);
+    padding: 14px 10px 6px;
+    text-transform: uppercase;
+  }
+  .fake-sidebar-item.target {
+    background: rgba(184,137,63,0.18);
+    color: var(--gold-soft);
+    font-weight: 500;
+    position: relative;
+  }
+  .fake-sidebar-item.target::after {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border: 1.5px solid var(--gold);
+    border-radius: 6px;
+    pointer-events: none;
+  }
+  .fake-sidebar-item.highlight { color: var(--gold-soft); }
+  .sidebar-callout { padding-top: 8px; }
+  .sidebar-callout h3 { margin-bottom: 8px; }
+  .sidebar-callout p {
+    font-size: 14px;
+    color: var(--mid);
+    margin-bottom: 14px;
+    line-height: 1.6;
+  }
+
+  /* ========== PROMPT CARDS ========== */
+  .prompt-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 24px;
+  }
+  .prompt-card {
+    background: var(--black);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .prompt-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 24px;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+  }
+  .prompt-name {
+    font-family: 'Fraunces', serif;
+    font-weight: 400;
+    font-style: italic;
+    font-size: 22px;
+    color: var(--gold-soft);
+  }
+  .copy-btn {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    color: rgba(245,241,234,0.5);
+    background: transparent;
+    border: 1px solid rgba(245,241,234,0.15);
+    border-radius: 3px;
+    padding: 7px 14px;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.15s;
+  }
+  .copy-btn:hover {
+    color: var(--gold);
+    border-color: var(--gold);
+    background: rgba(184,137,63,0.05);
+  }
+  .copy-btn.copied {
+    color: #7ec47e;
+    border-color: #4a7c4e;
+    background: rgba(74,124,78,0.1);
+  }
+  .prompt-body {
+    padding: 22px 24px 26px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    line-height: 1.85;
+    color: rgba(245,241,234,0.82);
+    white-space: pre-wrap;
+    overflow-x: auto;
+  }
+
+  /* ========== CALLOUTS ========== */
+  .callout {
+    background: var(--cream);
+    border-left: 3px solid var(--gold);
+    padding: 22px 28px;
+    border-radius: 0 4px 4px 0;
+    margin: 24px 0;
+  }
+  .callout.warning { background: #faf0ec; border-left-color: var(--red); }
+  .callout.info { background: #eef2ec; border-left-color: var(--green); }
+  .callout.tip { background: #ecf1f5; border-left-color: var(--blue); }
+  .callout-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    line-height: 1.3;
+  }
+  .callout.warning .callout-label { color: var(--red); }
+  .callout.info .callout-label { color: var(--green); }
+  .callout.tip .callout-label { color: var(--blue); }
+  .callout p { margin-bottom: 10px; font-size: 15px; line-height: 1.65; }
+  .callout p:last-child { margin-bottom: 0; }
+  .inline-example {
+    background: var(--cream);
+    border-left: 3px solid var(--gold-soft);
+    padding: 14px 20px;
+    border-radius: 0 4px 4px 0;
+    margin: 14px 0;
+    font-size: 14.5px;
+    color: var(--ink);
+    line-height: 1.6;
+  }
+  .inline-example em { color: var(--mid); font-style: italic; }
+  .inline-example strong { color: var(--gold); }
+
+  /* ========== STEP BLOCKS ========== */
+  .step-block {
+    background: var(--cream);
+    padding: 22px 26px;
+    border-radius: 4px;
+    margin: 16px 0;
+    display: grid;
+    grid-template-columns: 36px 1fr;
+    gap: 18px;
+    align-items: start;
+  }
+  .step-num {
+    font-family: 'Fraunces', serif;
+    font-size: 26px;
+    color: var(--gold);
+    line-height: 1;
+    margin-top: -2px;
+  }
+  .step-content h3 { margin-bottom: 6px; font-size: 17px; }
+  .step-content p {
+    font-size: 14px;
+    color: var(--mid);
+    margin: 0 0 10px;
+    line-height: 1.6;
+  }
+  .step-content p:last-child { margin-bottom: 0; }
+
+  /* ========== TASK BRIEF DEMO ========== */
+  .task-brief-demo {
+    background: var(--black);
+    border-radius: 6px;
+    overflow: hidden;
+    margin: 20px 0;
+  }
+  .task-brief-head {
+    padding: 14px 22px;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--gold);
+    text-transform: uppercase;
+  }
+  .task-brief-body {
+    padding: 20px 22px 24px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px;
+    line-height: 1.85;
+    color: rgba(245,241,234,0.82);
+    white-space: pre-wrap;
+    overflow-x: auto;
+  }
+
+  /* ========== PRIORITY KEY ========== */
+  .priority-key {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 20px 0;
+  }
+  @media (max-width: 680px) { .priority-key { grid-template-columns: 1fr; } }
+  .priority-item {
+    background: var(--cream);
+    padding: 16px 20px;
+    border-radius: 4px;
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+  }
+  .priority-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 500;
+    font-size: 14px;
+    color: var(--gold);
+    flex-shrink: 0;
+  }
+  .priority-text { font-size: 14px; color: var(--ink); line-height: 1.5; }
+
+  /* ========== SLACK MESSAGES ========== */
+  .slack-examples {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 20px 0;
+  }
+  .slack-msg {
+    background: var(--cream);
+    border-radius: 4px;
+    padding: 14px 18px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--ink);
+    line-height: 1.55;
+  }
+  .slack-msg .ch {
+    display: inline-block;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  /* ========== MODELS ========== */
+  .models {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 14px;
+    margin: 24px 0;
+  }
+  @media (max-width: 680px) { .models { grid-template-columns: 1fr; } }
+  .model-card {
+    background: var(--cream);
+    padding: 20px 22px;
+    border-radius: 4px;
+    border-top: 3px solid var(--gold);
+  }
+  .model-card.opus { border-top-color: var(--red); }
+  .model-card.haiku { border-top-color: var(--green); }
+  .model-name {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 18px;
+    color: var(--black);
+    margin-bottom: 4px;
+  }
+  .model-tagline {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  .model-card.opus .model-tagline { color: var(--red); }
+  .model-card.haiku .model-tagline { color: var(--green); }
+  .model-card p {
+    font-size: 13.5px;
+    color: var(--mid);
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  /* ========== FOOTER ========== */
+  footer {
+    background: var(--black);
+    color: rgba(245,241,234,0.4);
+    padding: 36px 56px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.05em;
+  }
+  .footer-inner {
+    max-width: 880px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  footer .accent { color: var(--gold); }
+  .starthere {
+    background: #ecf1f5;
+    border: 1px solid #cdddea;
+    border-radius: 6px;
+    padding: 18px 24px;
+    margin: 0 0 8px;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+  .starthere .sh-icon { font-size: 18px; line-height: 1.5; }
+  .starthere p { margin: 0; font-size: 14.5px; color: var(--ink); max-width: none; }
+  .starthere strong { color: var(--blue); }
+  .toc {
+    margin: 28px 0 4px;
+    background: var(--cream);
+    border-radius: 6px;
+    padding: 22px 26px;
+  }
+  .toc-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 16px;
+  }
+  .toc-links {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-auto-flow: row;
+    gap: 2px 28px;
+  }
+  @media (max-width: 680px) { .toc-links { grid-template-columns: 1fr; } }
+  .toc-links a {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    font-size: 15px;
+    color: var(--ink);
+    text-decoration: none;
+    padding: 9px 10px 9px 0;
+    border-bottom: 1px solid rgba(184,137,63,0.15);
+    transition: color 0.15s, padding-left 0.15s;
+  }
+  .toc-links a:hover { color: var(--gold); padding-left: 6px; }
+  .toc-links a .toc-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--gold);
+    flex-shrink: 0;
+    min-width: 18px;
+  }
+  .toc-links a .toc-arrow {
+    margin-left: auto;
+    color: var(--gold-soft);
+    font-size: 13px;
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+  .toc-links a:hover .toc-arrow { opacity: 1; }
+  .nav-back { max-width: 880px; margin: 0 auto; padding: 24px 32px 0; }
+  .nav-back a {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold);
+    text-decoration: none;
+    opacity: 0.7;
+    transition: opacity 0.15s;
+  }
+  .nav-back a:hover { opacity: 1; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="eyebrow">Epic Comedy Berlin · Internal Guides</div>
+    <h1>Daily <em>task</em> guide.</h1>
+    <p class="header-sub">For working through your P1 / P2 task list. Open this when you're about to do work.</p>
+    <div class="header-pointer">
+      <strong>First time using Claude at ECB?</strong> Read the <em><a href="https://epic-comedy-berlin.github.io/ecb-internal/claude-general-guide.html" style="color:var(--blue);">General Guide</a></em> once before this — it covers how Claude works, what it knows about ECB, the models, and how to do work outside the task system.
+    </div>
+  </div>
+</header>
+
+<div class="nav-back">
+  <a href="https://epic-comedy-berlin.github.io/ecb-internal/">← Back to all guides</a>
+</div>
+
+<main>
+
+  <!-- ───────── START HERE ───────── -->
+  <section>
+    <div class="starthere">
+      <span class="sh-icon">👋</span>
+      <p><strong>First time?</strong> Read the steps in order — they walk through one full task start to finish. Done this before? The <a href="#quickref" style="color:var(--blue);">Quick reference</a> below is the five-line version, or jump to any step. New to Claude at ECB entirely? Read the <a href="https://epic-comedy-berlin.github.io/ecb-internal/claude-general-guide.html" style="color:var(--blue);">General Guide</a> first.</p>
+    </div>
+
+    <div class="toc">
+      <div class="toc-label">On this page</div>
+      <div class="toc-links">
+        <a href="#quickref"><span class="toc-num">01</span>Quick reference<span class="toc-arrow">→</span></a>
+        <a href="#flow"><span class="toc-num">02</span>The flow at a glance<span class="toc-arrow">→</span></a>
+        <a href="#step1"><span class="toc-num">03</span>Step 1 — Find ECB Company Work<span class="toc-arrow">→</span></a>
+        <a href="#step2"><span class="toc-num">04</span>Step 2 — Your prompt<span class="toc-arrow">→</span></a>
+        <a href="#step3"><span class="toc-num">05</span>Step 3 — Read your briefing<span class="toc-arrow">→</span></a>
+        <a href="#step4"><span class="toc-num">06</span>Step 4 — Pick a task<span class="toc-arrow">→</span></a>
+        <a href="#step5"><span class="toc-num">07</span>Step 5 — Optimise via Lyra<span class="toc-arrow">→</span></a>
+        <a href="#step6"><span class="toc-num">08</span>Step 6 — Work with Claude<span class="toc-arrow">→</span></a>
+        <a href="#step7"><span class="toc-num">09</span>Step 7 — When you finish<span class="toc-arrow">→</span></a>
+        <a href="#models"><span class="toc-num">10</span>The models<span class="toc-arrow">→</span></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────── QUICK REFERENCE ───────── -->
+  <section class="quick-ref" id="quickref">
+    <div class="qr-label">For when you already know the system</div>
+    <h2>Quick <em>reference</em></h2>
+    <ol class="qr-list">
+      <li>Open <strong>ECB Company Work</strong> · paste your prompt · get briefing</li>
+      <li>Tell Claude which task you want · it tells you which model + gives you a task brief (only for complex tasks)</li>
+      <li>Take brief to <strong>LYRA</strong> · paste · copy the optimised version</li>
+      <li>Back to your briefing chat · switch model at the bottom · paste optimised prompt · run</li>
+      <li>Post the Slack handoff message in <strong>#p0-tasks</strong> when done</li>
+    </ol>
+  </section>
+
+  <!-- ───────── FLOW DIAGRAM ───────── -->
+  <section id="flow">
+    <h2>The flow at a <em>glance</em></h2>
+    <p class="lead">From "what should I work on?" to finished work.</p>
+
+    <div class="flow">
+      <div class="flow-step">
+        <div class="flow-num">01</div>
+        <div class="flow-label">Open ECB Company Work</div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">02</div>
+        <div class="flow-label">Paste your prompt</div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">03</div>
+        <div class="flow-label">Get your briefing</div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">04</div>
+        <div class="flow-label">Pick a task</div>
+      </div>
+      <div class="flow-step optional">
+        <div class="flow-num">05 · only complex tasks</div>
+        <div class="flow-label">Optimise via Lyra</div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">06</div>
+        <div class="flow-label">Work with Claude</div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">07</div>
+        <div class="flow-label">Post in Slack</div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">08</div>
+        <div class="flow-label">Done</div>
+      </div>
+    </div>
+
+    <p style="margin-top: 24px; font-size: 14px; color: var(--mid);"><strong>Step 5 is optional</strong> — only complex tasks need the Lyra round-trip. Claude tells you when. Simple tasks go from Step 4 straight to Step 6.</p>
+  </section>
+
+  <!-- ───────── ACCESS ───────── -->
+  <section id="step1">
+    <h2>Step 1 — Find <em>ECB Company Work</em></h2>
+    <p>Go to <strong>claude.ai</strong> and sign in with the shared ECB Google account — <strong>info@epiccomedyberlin.com</strong>. We all use this same login for Claude (and most other ECB platforms). If you don't have the password, ask Aaron.</p>
+
+    <p>Once you're in, look at the left sidebar. Under <strong>Starred</strong>, click <strong>ECB Company Work</strong>:</p>
+
+    <div class="sidebar-demo">
+      <div class="fake-sidebar">
+        <div class="fake-sidebar-logo">Claude</div>
+        <div class="fake-sidebar-item"><span class="dot"></span>New chat</div>
+        <div class="fake-sidebar-item"><span class="dot"></span>Search</div>
+        <div class="fake-sidebar-item"><span class="dot"></span>Chats</div>
+        <div class="fake-sidebar-item"><span class="dot"></span>Projects</div>
+        <div class="fake-sidebar-section">Starred</div>
+        <div class="fake-sidebar-item target"><span class="dot" style="background: var(--gold);"></span>ECB Company Work</div>
+        <div class="fake-sidebar-item"><span class="dot"></span>LOG</div>
+        <div class="fake-sidebar-item highlight"><span class="dot" style="background: var(--gold-soft);"></span>LYRA</div>
+        <div class="fake-sidebar-item"><span class="dot"></span>MA</div>
+        <div class="fake-sidebar-item"><span class="dot"></span>MIR</div>
+      </div>
+      <div class="sidebar-callout">
+        <h3>Then paste your prompt</h3>
+        <p>Once the project opens, you'll see a chat box at the top of the screen. Paste your personal prompt straight in there. Hit enter. That's it.</p>
+        <p><strong>LYRA</strong> is the prompt specialist — you'll use it for complex tasks (covered in Step 5). The other items (LOG, MA, MIR) are Aaron's tools — see the <a href="https://epic-comedy-berlin.github.io/ecb-internal/claude-general-guide.html" style="color:var(--blue);">General Guide</a> for what each does.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────── PROMPTS ───────── -->
+  <section id="step2">
+    <h2>Step 2 — Your <em>prompt</em></h2>
+    <p>You have a personal prompt. Save it on your phone, in your notes app, wherever — copy and paste it whenever you want a briefing.</p>
+
+    <div class="prompt-stack">
+      <div class="prompt-card">
+        <div class="prompt-head">
+          <div class="prompt-name">Aaron</div>
+          <button class="copy-btn" data-target="p-aaron">Copy</button>
+        </div>
+<div class="prompt-body" id="p-aaron">Aaron task briefing
+I am Aaron, working on Epic Comedy Berlin tasks.
+Read ECB_Active_State.md. Filter to tasks where I am
+listed as an owner, sole or shared.
+Give me my task briefing: P1 first, then P2. For each
+task include current status and the single next concrete
+action that moves it forward today.
+End with: "Pick a task to work on, or ask me anything."</div>
+      </div>
+
+      <div class="prompt-card">
+        <div class="prompt-head">
+          <div class="prompt-name">Ori</div>
+          <button class="copy-btn" data-target="p-ori">Copy</button>
+        </div>
+<div class="prompt-body" id="p-ori">Ori task briefing
+I am Ori, working on Epic Comedy Berlin tasks.
+Read ECB_Active_State.md. Filter to tasks where I am
+listed as an owner, sole or shared.
+Give me my task briefing: P1 first, then P2. For each
+task include current status and the single next concrete
+action that moves it forward today.
+End with: "Pick a task to work on, or ask me anything."</div>
+      </div>
+
+      <div class="prompt-card">
+        <div class="prompt-head">
+          <div class="prompt-name">Brendan</div>
+          <button class="copy-btn" data-target="p-brendan">Copy</button>
+        </div>
+<div class="prompt-body" id="p-brendan">Brendan task briefing
+I am Brendan, working on Epic Comedy Berlin tasks.
+Read ECB_Active_State.md. Filter to tasks where I am
+listed as an owner, sole or shared.
+Give me my task briefing: P1 first, then P2. For each
+task include current status and the single next concrete
+action that moves it forward today.
+End with: "Pick a task to work on, or ask me anything."</div>
+      </div>
+    </div>
+
+    <div class="callout warning">
+      <div class="callout-label">Important</div>
+      <p><strong>Always start a fresh chat.</strong> Every time you want a briefing, click ECB Company Work and start a new conversation. Never continue an old briefing chat for a new day's work.</p>
+      <p>Why: Claude loads the latest task files at the start of each new chat. Old chats are stuck with whatever was loaded the day they began.</p>
+    </div>
+  </section>
+
+  <!-- ───────── BRIEFING ───────── -->
+  <section id="step3">
+    <h2>Step 3 — Read your <em>briefing</em></h2>
+    <p>Claude returns your tasks split by priority. You'll see <strong>P1</strong> and <strong>P2</strong> tags on each task.</p>
+
+    <div class="priority-key">
+      <div class="priority-item">
+        <div class="priority-tag">P1</div>
+        <div class="priority-text"><strong>Do these today.</strong> Direct revenue impact or quick wins.</div>
+      </div>
+      <div class="priority-item">
+        <div class="priority-tag">P2</div>
+        <div class="priority-text"><strong>Do these this week.</strong> Important but not urgent.</div>
+      </div>
+    </div>
+
+    <p>Each task has a one-line "next concrete action" — the smallest step that moves it forward today. Pick one and tell Claude you want to work on it.</p>
+  </section>
+
+  <!-- ───────── PICK A TASK ───────── -->
+  <section id="step4">
+    <h2>Step 4 — Pick a <em>task</em></h2>
+    <p>Tell Claude which task you want to work on (e.g. <em>"Let's do the newsletter task"</em> or <em>"I'm ready to start #11"</em>). Claude assesses how complex the task is and either starts working with you directly, or hands you a task brief to take to Lyra first.</p>
+
+    <div class="step-block">
+      <div class="step-num">A</div>
+      <div class="step-content">
+        <h3>For simple tasks — Claude just starts</h3>
+        <p>Quick admin, scheduling, lookups, basic emails — Claude tells you to stay on Sonnet 4.6 and works through it with you in the same chat. Skip ahead to Step 6.</p>
+      </div>
+    </div>
+
+    <div class="inline-example">
+      <strong>What that looks like:</strong> <em>"Stay on Sonnet 4.6 for this. What's the email address you need to message, and what outcome do you want?"</em> — and you're already working. No round-trip.
+    </div>
+
+    <div class="step-block">
+      <div class="step-num">B</div>
+      <div class="step-content">
+        <h3>For complex tasks — Claude gives you three things</h3>
+        <p>Anything creative, strategic, copy-heavy, research-driven, or high-stakes (newsletter, contract review, ad copy, market research, a detailed proposal) — Claude outputs <strong>(1) a model recommendation</strong>, <strong>(2) a task brief</strong> to take to Lyra, and <strong>(3) instructions on what to do next</strong>. The optimised prompt comes back to <strong>this same chat</strong> — you don't open a new one.</p>
+      </div>
+    </div>
+
+    <div class="inline-example">
+      <strong>What that looks like:</strong> <em>"Switch to Opus 4.8 for this — it needs sustained reasoning. Here's your task brief: [code block]. Take this to the LYRA chat..."</em> — full step-by-step follows in Step 5.
+    </div>
+
+    <p style="margin-top: 18px;">This second route exists because the briefing chat is just running off your task list. Lyra takes that rough task and turns it into a precision-crafted prompt that gets you a meaningfully better result.</p>
+  </section>
+
+  <!-- ───────── LYRA STEP 5 ───────── -->
+  <section id="step5">
+    <h2>Step 5 — Optimise via <em>Lyra</em> <span style="font-size: 14px; color: var(--mid); font-weight: 400;">(complex tasks only)</span></h2>
+    <p><strong>Lyra is a prompt specialist</strong> — a saved chat in your sidebar called <strong>LYRA</strong> that turns rough requests into precision-crafted prompts. You'll round-trip through it any time Claude hands you a task brief.</p>
+
+    <h3 style="margin-top: 28px;">What Claude gives you in the briefing chat</h3>
+    <p>When you pick a complex task, Claude in the briefing chat outputs three things together: a model recommendation, a task brief in a code block, and instructions on what to do next. Here's what the task brief part looks like:</p>
+
+    <div class="task-brief-demo">
+      <div class="task-brief-head">Example task brief — copy this, paste into Lyra</div>
+<div class="task-brief-body">DETAIL using Claude — I'm working on the ECB newsletter.
+This is the first newsletter we've ever sent. Goal: build a
+voice manifesto plus draft issue #1 in Brendan's voice. Tone:
+warm, direct, lightly funny, non-corporate — feels like
+inside the comedy scene, not a marketing department.
+
+Use the ECB project files (Active State, Master Context,
+Decision Archive) for all company context. Work through this
+task using a guided loop: ask one question at a time, hold
+the cognitive load, do not barrel forward or present
+multi-stage plans up front. The user provides voice,
+instincts, and decisions; you provide structure, drafts,
+frameworks, and research. Research using credible named
+sources — experts, original studies, industry authorities —
+and cite who said what. Confirm completion of each step
+before moving on. When complete, generate a brief Slack
+handoff message for #p0-tasks announcing completion.</div>
+    </div>
+
+    <p>That whole block is your task brief. Claude generates it for you — you don't need to write it.</p>
+
+    <h3 style="margin-top: 32px;">The round-trip — step by step</h3>
+
+    <div class="step-block">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <h3>Copy the task brief</h3>
+        <p>Select the whole code block (everything inside the dark box). Copy it.</p>
+      </div>
+    </div>
+
+    <div class="step-block">
+      <div class="step-num">2</div>
+      <div class="step-content">
+        <h3>Open the LYRA chat</h3>
+        <p>Find <strong>LYRA</strong> in the Starred section of the sidebar. Click it.</p>
+      </div>
+    </div>
+
+    <div class="step-block">
+      <div class="step-num">3</div>
+      <div class="step-content">
+        <h3>Paste and send</h3>
+        <p>Paste the brief into the chat box. Hit enter. Lyra usually gives you back an optimised prompt straight away. Occasionally — if it's a DETAIL request and it genuinely needs more context to do a good job — it'll ask one or two clarifying questions first. Answer them, and you'll get the optimised prompt next. The first word in the brief — BASIC or DETAIL — tells Lyra how thorough to be.</p>
+      </div>
+    </div>
+
+    <div class="step-block">
+      <div class="step-num">4</div>
+      <div class="step-content">
+        <h3>Copy the optimised prompt</h3>
+        <p>Lyra outputs a block called <em>"Your Optimized Prompt:"</em> — copy that whole block.</p>
+      </div>
+    </div>
+
+    <div class="step-block">
+      <div class="step-num">5</div>
+      <div class="step-content">
+        <h3>Go back to your briefing chat</h3>
+        <p>Click into the sidebar. Under <strong>Recents</strong> at the top of the chat list, you'll see your briefing chat — it's the one you were just in. Click it. <strong>Don't open a new chat — go back to the same one.</strong></p>
+      </div>
+    </div>
+
+    <div class="step-block">
+      <div class="step-num">6</div>
+      <div class="step-content">
+        <h3>Switch the model before pasting</h3>
+        <p>This is the part most people miss. Look at the bottom of the chat input box — you'll see the current model name (e.g. <em>"Claude Sonnet 4.6"</em>) with a small dropdown arrow next to it. <strong>Click that name.</strong> A list of models opens. Pick the one Claude told you to use (e.g. Opus 4.8 for the newsletter example above). The change takes effect from your next message onwards.</p>
+      </div>
+    </div>
+
+    <div class="step-block">
+      <div class="step-num">7</div>
+      <div class="step-content">
+        <h3>Paste the optimised prompt and send</h3>
+        <p>Paste the prompt Lyra gave you into the chat box. Send it. Claude — now running on the right model — will start working through the task with you in guided mode.</p>
+      </div>
+    </div>
+
+    <div class="callout tip">
+      <div class="callout-label">BASIC vs DETAIL — what Lyra is doing</div>
+      <p><strong>BASIC</strong> — quick optimisation. Lyra returns a polished prompt immediately. Used for routine creative work.</p>
+      <p><strong>DETAIL</strong> — for high-stakes work where the framing matters. Lyra builds a more comprehensive, carefully-scoped prompt. It will ask clarifying questions <em>only if it needs missing context</em> — most of the time it has enough to work with and just returns the optimised prompt straight away.</p>
+      <p>Claude in the briefing chat decides which to use when generating your task brief. You don't need to think about it — just paste what you're given.</p>
+    </div>
+  </section>
+
+  <!-- ───────── WORK WITH CLAUDE ───────── -->
+  <section id="step6">
+    <h2>Step 6 — Work <em>with Claude</em></h2>
+    <p>From here on, everything happens in your briefing chat — same chat the whole way through. Whether you went through Lyra or skipped it, Claude is now in guided mode. It asks you one thing at a time, pulls research from credible sources (named experts, primary studies, recognised industry authorities), and walks you through the work step by step.</p>
+
+    <p>You don't need to know what comes next. Just answer what Claude asks. Your job is to bring the voice, the instincts, the decisions — Claude handles the structure, drafts, and frameworks. When Claude cites research, it'll name the source so you can judge for yourself.</p>
+
+    <div class="callout">
+      <div class="callout-label">Example</div>
+      <p>You're working on the newsletter. Claude reads about newsletter best practices, names the experts it's drawing from, asks what voice you want, presents a structure, you rewrite a sentence in your voice, Claude folds your version in, asks about subject lines, you pick one, Claude drafts the first issue. By the end you have a finished newsletter without ever needing to plan the steps yourself.</p>
+    </div>
+
+    <div class="callout tip">
+      <div class="callout-label">Before you finalise — make Claude check its own work</div>
+      <p>For anything that matters — a draft going out, a decision recommendation, a final deliverable — explicitly ask Claude to verify before you accept it. Claude often catches its own errors when asked to look. It just doesn't always do it on its own.</p>
+      <p>Use lines like: <em>"Check your work — list every requirement I gave you and confirm each one is covered"</em> · <em>"Verify the facts in this draft against the project files"</em> · <em>"Is anything in this output unsupported or guessed?"</em></p>
+      <p>Two minutes of self-check saves an hour of fixing it later.</p>
+    </div>
+  </section>
+
+  <!-- ───────── PAUSE ───────── -->
+  <section id="pause">
+    <h2>If you need to <em>pause</em></h2>
+    <p>You don't have to finish a task in one sitting. Real work has interruptions — meetings, blockers, needing input from someone else, just running out of time. You can always stop and come back.</p>
+
+    <h3>To stop for now</h3>
+    <p>Just close the tab or walk away. Claude saves the chat automatically. Nothing's lost.</p>
+
+    <h3>To resume the same task later</h3>
+    <p>Go back to <strong>claude.ai</strong>. On the left side of the screen you'll see a sidebar — if it's hidden, click the small menu icon at the top-left to open it. Scroll down past <strong>Starred</strong> and you'll find a section called <strong>Recents</strong>. Your chat will be near the top (it's the most recent thing you worked on). Click the chat title to open it. Everything is still there — your conversation, the work in progress, all of it. Just keep going from where you left off.</p>
+
+    <h3>To start a different task</h3>
+    <p>Click <strong>ECB Company Work</strong> in the Starred section of the sidebar (same as before), and paste your prompt. That gives you a fresh briefing. Different chat, new context, doesn't affect the paused one.</p>
+
+    <div class="callout">
+      <div class="callout-label">Quick reference</div>
+      <p><strong>Resume same task</strong> → sidebar → Recents → click your chat</p>
+      <p><strong>Start a new task</strong> → sidebar → Starred → ECB Company Work → paste prompt</p>
+    </div>
+  </section>
+
+  <!-- ───────── HANDOFF ───────── -->
+  <section id="step7">
+    <h2>Step 7 — When you <em>finish</em></h2>
+    <p>When the task is done, Claude tells you. It also gives you a short message to post in <strong>#p0-tasks</strong> on Slack. Post it. That's the whole handoff.</p>
+
+    <p>Aaron sees the post, reads your chat, and updates the task files. Your work shows as complete in the next briefing. You don't need to do anything else.</p>
+
+    <div class="slack-examples">
+      <div class="slack-msg">
+        <div class="ch">#p0-tasks</div>
+        Newsletter draft done. Aaron — system needs updating with what's in this chat. Voice manifesto + draft issue #1 ready.
+      </div>
+      <div class="slack-msg">
+        <div class="ch">#p0-tasks</div>
+        #6 done — integration terms verified. Two open questions flagged in the chat for follow-up.
+      </div>
+      <div class="slack-msg">
+        <div class="ch">#p0-tasks</div>
+        #3 report complete — findings and a recommendation are in the chat. Aaron, please pull.
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────── EXTRA TIME ───────── -->
+  <section id="extra">
+    <h2>Got <em>extra time?</em></h2>
+    <p>Your briefing leads with <strong>P1</strong> and <strong>P2</strong> because those are what's most pressing. But every task in the system has a priority — and when your urgent work is clear, there's still useful work in the backlog.</p>
+
+    <div class="priority-key">
+      <div class="priority-item">
+        <div class="priority-tag">P3</div>
+        <div class="priority-text"><strong>This sprint or month.</strong> Important but not urgent. Worth picking up when P1/P2 is under control.</div>
+      </div>
+      <div class="priority-item">
+        <div class="priority-tag">P4</div>
+        <div class="priority-text"><strong>Backlog.</strong> Lower priority but still on the radar. Reserve for genuinely free time.</div>
+      </div>
+    </div>
+
+    <p>If you want to see them, ask Claude: <em>"What's on my P3 list?"</em> or <em>"Show me my full task list."</em> Claude will pull them and walk you through any one you pick — same process as P1 and P2, including the Lyra round-trip when needed.</p>
+  </section>
+
+  <!-- ───────── MODELS (REFERENCE) ───────── -->
+  <section id="models">
+    <h2>The <em>models</em></h2>
+    <p>Claude comes in three tiers — a fast one, an everyday one, and a heavy one. The version numbers below are the current line-up and will change as new ones are released, but the <em>roles</em> stay the same. Default is the everyday tier — <strong>Sonnet 4.6</strong> today — and Claude tells you when to switch as part of any task it gives you, so you don't have to track the names yourself.</p>
+
+    <div class="models">
+      <div class="model-card">
+        <div class="model-name">Sonnet 4.6</div>
+        <div class="model-tagline">Default · Daily driver</div>
+        <p>For almost everything. Briefings, writing, drafts, social, email, research. Start here.</p>
+      </div>
+      <div class="model-card opus">
+        <div class="model-name">Opus 4.8</div>
+        <div class="model-tagline">Heavy lifting</div>
+        <p>For deep work — contract review, complex strategy, long document analysis, anything that needs sustained reasoning.</p>
+      </div>
+      <div class="model-card haiku">
+        <div class="model-name">Haiku 4.5</div>
+        <div class="model-tagline">Fast & simple</div>
+        <p>For quick lookups or simple questions. Rarely the right pick for ECB work.</p>
+      </div>
+    </div>
+
+    <h3 style="margin-top: 28px;">How to switch</h3>
+    <p>Look at the bottom of the chat input box (where you type). You'll see the current model name (e.g. <em>"Claude Sonnet 4.6"</em>) with a small dropdown arrow next to it. Click the model name, pick the model you want from the dropdown, then send your next message. The change applies from your next message onwards — your conversation history is preserved.</p>
+
+    <div class="callout warning">
+      <div class="callout-label">Token usage — we share the account</div>
+      <p><strong>Opus costs ~5× more per token than Haiku, and ~1.5–2× more than Sonnet</strong> — and Opus also "thinks" longer, so a long Opus chat can chew through 10× what the same chat on Sonnet would. We share one Max plan, so wrong-model use locks the whole team out until the 5-hour reset.</p>
+      <p><strong>Default Sonnet 4.6.</strong> Only switch to Opus when Claude tells you to or when you're starting genuinely deep thinking up front. Drop back to Sonnet once the heavy reasoning phase is over.</p>
+      <p>Full breakdown — including the "plan with Opus, execute with Sonnet" pattern for saving tokens mid-chat — is in the <a href="https://epic-comedy-berlin.github.io/ecb-internal/claude-general-guide.html" style="color:var(--blue);">General Guide</a>.</p>
+    </div>
+
+    <div class="callout tip">
+      <div class="callout-label">When to switch</div>
+      <p>Trust Claude's recommendation in your task briefing. If Claude doesn't say to switch, stay on Sonnet 4.6 — it handles 90% of ECB work fine.</p>
+      <p><strong>Don't switch models routinely mid-chat</strong> — switching costs tokens (the new model re-reads the whole chat history before responding). The only time it's worth it: you started on Opus for genuine deep thinking, that phase is clearly over, and you have significant execution work ahead. Then drop to Sonnet, once. Otherwise, stay where you are. Full breakdown in the <a href="https://epic-comedy-berlin.github.io/ecb-internal/claude-general-guide.html" style="color:var(--blue);">General Guide</a>.</p>
+    </div>
+  </section>
+
+  <!-- ───────── COORDINATION ───────── -->
+  <section id="team">
+    <h2>Coordinating with <em>the team</em></h2>
+    <p>Because we share one Max plan account, your model choices and chat habits affect everyone. Two simple rules:</p>
+
+    <div class="callout warning">
+      <div class="callout-label">Channel discipline</div>
+      <p><strong>#p0-tasks is for tasks only</strong> — task completion, status updates, task-specific handoffs. Nothing else. <em>(Full channel map: the <a href="https://epic-comedy-berlin.github.io/ecb-internal/slack-guide.html" style="color:var(--blue);">Slack guide</a>.)</em></p>
+      <p><strong>Any other team communication goes in #p1-important</strong> — heads-up posts, dependency flags, coordination, decisions, things people need to know. Don't post these in #p0-tasks.</p>
+    </div>
+
+    <h3 style="margin-top: 28px;">Heavy task coming up — flag it</h3>
+    <p>If your task is time-sensitive AND will use a lot of Opus, post in <strong>#p1-important</strong> before you start so nobody else fires a non-urgent Opus session at the same time:</p>
+
+    <div class="slack-examples">
+      <div class="slack-msg">
+        <div class="ch">#p1-important</div>
+        Heads up — starting a heavy review task now (Opus, 1–2 hours). Output needed by Thursday. Don't fire heavy work in the next few hours unless it's urgent.
+      </div>
+    </div>
+
+    <h3 style="margin-top: 28px;">Naming dependencies after meetings</h3>
+    <p>If your task blocks someone else's, say so explicitly when you start — don't assume people remember from the meeting. Dependency reminders go in <strong>#p1-important</strong>, not #p0-tasks:</p>
+
+    <div class="slack-examples">
+      <div class="slack-msg">
+        <div class="ch">#p1-important</div>
+        Reminder: my review task is the blocker for the Thursday call. Aiming to finish by Wednesday EOD.
+      </div>
+    </div>
+
+    <p style="margin-top: 16px; font-size: 14px; color: var(--mid);">Full guidance on shared-account coordination is in the <a href="https://epic-comedy-berlin.github.io/ecb-internal/claude-general-guide.html" style="color:var(--blue);">General Guide</a> and the <a href="https://epic-comedy-berlin.github.io/ecb-internal/claude-token-guide.html" style="color:var(--blue);">Shared Account guide</a>.</p>
+  </section>
+
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <div>Epic Comedy Berlin · Internal use only · Task Guide</div>
+    <div>Updated <span class="accent">June 2026</span></div>
+  </div>
+</footer>
+
+<script>
+  document.querySelectorAll('.copy-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = document.getElementById(btn.dataset.target);
+      navigator.clipboard.writeText(target.innerText).then(() => {
+        const originalText = btn.textContent;
+        btn.textContent = 'Copied';
+        btn.classList.add('copied');
+        setTimeout(() => {
+          btn.textContent = originalText;
+          btn.classList.remove('copied');
+        }, 2000);
+      });
+    });
+  });
+</script>
+
+</body>
+</html>

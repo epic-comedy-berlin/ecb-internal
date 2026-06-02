@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ECB Slack Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;1,9..144,400&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0c0b0a;
+    --bg: #f5f1ea;
+    --paper: #ffffff;
+    --cream: #ece6db;
+    --gold: #b8893f;
+    --gold-soft: #d4ae6f;
+    --red: #b8453a;
+    --green: #4a7c4e;
+    --blue: #3a6e8f;
+    --ink: #1f1c18;
+    --mid: #6b645b;
+    --line: #d6cfc1;
+    --slack-purple: #611f69;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Inter', -apple-system, sans-serif;
+    font-weight: 400;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ========== HEADER ========== */
+  header {
+    background: var(--black);
+    color: var(--bg);
+    padding: 80px 56px 100px;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute;
+    top: -180px; right: -180px;
+    width: 480px; height: 480px;
+    border: 1px solid rgba(184,137,63,0.18);
+    border-radius: 50%;
+  }
+  header::after {
+    content: '';
+    position: absolute;
+    top: -80px; right: -80px;
+    width: 280px; height: 280px;
+    border: 1px solid rgba(184,137,63,0.1);
+    border-radius: 50%;
+  }
+  .header-inner {
+    max-width: 880px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+  .eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 28px;
+  }
+  header h1 {
+    font-family: 'Fraunces', serif;
+    font-weight: 400;
+    font-size: clamp(40px, 6vw, 64px);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    max-width: 720px;
+  }
+  header h1 em { font-style: italic; color: var(--gold-soft); }
+  .header-sub {
+    margin-top: 28px;
+    font-size: 15px;
+    color: rgba(245,241,234,0.55);
+    max-width: 580px;
+    line-height: 1.7;
+  }
+  .header-pointer {
+    margin-top: 32px;
+    padding: 16px 22px;
+    background: rgba(184,137,63,0.08);
+    border-left: 2px solid var(--gold);
+    color: rgba(245,241,234,0.85);
+    font-size: 14px;
+    max-width: 680px;
+  }
+  .header-pointer strong { color: var(--gold-soft); font-weight: 500; }
+
+  /* ========== MAIN ========== */
+  main {
+    max-width: 880px;
+    margin: -50px auto 0;
+    padding: 0 32px 120px;
+    position: relative;
+  }
+  section {
+    background: var(--paper);
+    margin-bottom: 32px;
+    padding: 56px 64px;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(12,11,10,0.04), 0 12px 40px rgba(12,11,10,0.06);
+  }
+  @media (max-width: 680px) {
+    main { padding: 0 16px 80px; }
+    section { padding: 40px 28px; }
+    header { padding: 60px 24px 90px; }
+  }
+  h2 {
+    font-family: 'Fraunces', serif;
+    font-weight: 400;
+    font-size: 32px;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    margin-bottom: 28px;
+    color: var(--black);
+  }
+  h2 em { font-style: italic; color: var(--gold); }
+  h3 {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 20px;
+    margin-bottom: 12px;
+    color: var(--black);
+  }
+  p {
+    font-size: 16px;
+    color: var(--ink);
+    margin-bottom: 18px;
+    max-width: 64ch;
+  }
+  p.lead { font-size: 18px; line-height: 1.6; }
+  strong { font-weight: 600; color: var(--black); }
+
+  /* ========== CALLOUTS ========== */
+  .callout {
+    background: var(--cream);
+    border-left: 3px solid var(--gold);
+    padding: 22px 28px;
+    border-radius: 0 4px 4px 0;
+    margin: 24px 0;
+  }
+  .callout.warning { background: #faf0ec; border-left-color: var(--red); }
+  .callout.info    { background: #eef2ec; border-left-color: var(--green); }
+  .callout.tip     { background: #ecf1f5; border-left-color: var(--blue); }
+  .callout-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    line-height: 1.3;
+  }
+  .callout.warning .callout-label { color: var(--red); }
+  .callout.info    .callout-label { color: var(--green); }
+  .callout.tip     .callout-label { color: var(--blue); }
+  .callout p { margin-bottom: 10px; font-size: 15px; line-height: 1.65; }
+  .callout p:last-child { margin-bottom: 0; }
+
+  /* ========== CHANNEL TABLE ========== */
+  .channel-table { width: 100%; border-collapse: collapse; margin: 8px 0; }
+  .channel-table th {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--mid);
+    padding: 10px 14px;
+    text-align: left;
+    border-bottom: 2px solid var(--line);
+  }
+  .channel-table td {
+    padding: 13px 14px;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--ink);
+  }
+  .channel-table tr:last-child td { border-bottom: none; }
+  .channel-table td:first-child {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px;
+    color: var(--slack-purple);
+    white-space: nowrap;
+    font-weight: 500;
+  }
+  .channel-table td:nth-child(2) {
+    color: var(--mid);
+    font-size: 13.5px;
+  }
+  .ch-group-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gold);
+    padding: 18px 14px 6px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  /* ========== HOW-TO BLOCKS ========== */
+  .howto-block {
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 20px 0;
+  }
+  .howto-header {
+    background: var(--cream);
+    padding: 14px 22px;
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+  }
+  .howto-title {
+    font-family: 'Fraunces', serif;
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--black);
+  }
+  .howto-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--mid);
+  }
+  .howto-body {
+    padding: 20px 22px 22px;
+  }
+  .howto-body p {
+    font-size: 14.5px;
+    color: var(--mid);
+    margin-bottom: 12px;
+    line-height: 1.65;
+    max-width: none;
+  }
+  .howto-body p:last-child { margin-bottom: 0; }
+  .howto-body strong { color: var(--ink); }
+  .howto-body em { color: var(--mid); font-style: italic; }
+
+  /* ========== NOTIFICATION PATH ========== */
+  .notif-path {
+    background: #1a1814;
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin: 20px 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: rgba(245,241,234,0.75);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+  }
+  .notif-path .arrow { color: var(--gold); }
+  .notif-path .pill {
+    background: rgba(184,137,63,0.15);
+    border: 1px solid rgba(184,137,63,0.3);
+    border-radius: 4px;
+    padding: 3px 10px;
+    color: var(--gold-soft);
+    white-space: nowrap;
+  }
+
+  /* ========== SETTINGS CARDS ========== */
+  .settings-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin: 20px 0;
+  }
+  @media (max-width: 680px) { .settings-grid { grid-template-columns: 1fr; } }
+  .settings-card {
+    background: var(--cream);
+    border-radius: 4px;
+    padding: 18px 20px;
+    border-top: 3px solid var(--gold);
+  }
+  .settings-card.blue { border-top-color: var(--blue); }
+  .settings-card.green { border-top-color: var(--green); }
+  .settings-title {
+    font-family: 'Fraunces', serif;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--black);
+    margin-bottom: 8px;
+  }
+  .settings-card p {
+    font-size: 13.5px;
+    color: var(--mid);
+    margin: 0;
+    line-height: 1.6;
+  }
+  .settings-card strong { color: var(--ink); }
+
+  /* ========== FAKE SIDEBAR ========== */
+  .sidebar-demo {
+    display: grid;
+    grid-template-columns: 210px 1fr;
+    gap: 28px;
+    margin: 24px 0;
+    align-items: start;
+  }
+  @media (max-width: 680px) { .sidebar-demo { grid-template-columns: 1fr; } }
+  .fake-sidebar {
+    background: #3f0e40;
+    border-radius: 8px;
+    padding: 14px 0;
+    font-family: 'Inter', sans-serif;
+    font-size: 12.5px;
+  }
+  .fs-workspace {
+    font-family: 'Fraunces', serif;
+    font-size: 14px;
+    color: #fff;
+    padding: 4px 14px 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    margin-bottom: 8px;
+  }
+  .fs-section {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.4);
+    padding: 10px 14px 4px;
+  }
+  .fs-item {
+    padding: 5px 14px;
+    color: rgba(255,255,255,0.65);
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    border-radius: 4px;
+    margin: 1px 6px;
+  }
+  .fs-item.unread { color: #fff; font-weight: 600; }
+  .fs-item.active { background: rgba(255,255,255,0.15); color: #fff; font-weight: 500; }
+  .fs-item .hash { opacity: 0.5; font-size: 13px; font-weight: 400; }
+  .fs-item.unread .hash { opacity: 0.7; }
+  .fs-item .badge {
+    margin-left: auto;
+    background: #e01e5a;
+    color: #fff;
+    font-size: 10px;
+    font-weight: 600;
+    border-radius: 10px;
+    padding: 1px 6px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .sidebar-note p { font-size: 14px; color: var(--mid); margin-bottom: 14px; line-height: 1.6; }
+  .sidebar-note strong { color: var(--ink); }
+
+  /* ========== FOOTER ========== */
+  footer {
+    background: var(--black);
+    color: rgba(245,241,234,0.4);
+    padding: 36px 56px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.05em;
+  }
+  .footer-inner {
+    max-width: 880px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .accent { color: var(--gold); }
+
+  /* ========== NAV BACK ========== */
+  .nav-back { max-width: 880px; margin: 0 auto; padding: 24px 32px 0; }
+  .nav-back a {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold);
+    text-decoration: none;
+    opacity: 0.7;
+    transition: opacity 0.15s;
+  }
+  .nav-back a:hover { opacity: 1; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="eyebrow">Epic Comedy Berlin · Internal Guides</div>
+    <h1>Using <em>Slack</em></h1>
+    <p class="header-sub">How ECB uses Slack, what each channel is for, and how to set things up so you stay in the loop without being constantly interrupted.</p>
+    <div class="header-pointer">
+      <strong>The short version:</strong> Slack is how the team communicates. It's where you flag things, share things, and talk to each other between meetings.
+    </div>
+  </div>
+</header>
+
+<div class="nav-back">
+  <a href="https://epic-comedy-berlin.github.io/ecb-internal/">← Back to all guides</a>
+</div>
+
+<main>
+
+  <!-- ───────── WHAT SLACK IS FOR ───────── -->
+  <section>
+    <h2>What Slack is <em>for</em></h2>
+    <p class="lead">Slack is ECB's communication layer — the place where the team stays in sync between meetings. You use it to flag something that needs attention, share an update, ask a quick question, or tell someone something needs doing.</p>
+    <p>Think of it as where the team talks. The actual output — strategy, drafts, decisions, builds — gets produced in meetings, in Claude, and in the tools the team uses day to day. Slack is the layer that keeps everyone connected to all of it.</p>
+
+    <div class="callout">
+      <div class="callout-label">After-hours messages</div>
+      <p>If a message is sent after 10pm, assume it won't be read until the next day. If something is urgent and nobody is responding, send a message in the <strong>WhatsApp group</strong> letting the team know to check Slack. Slack is not monitored around the clock — WhatsApp is the escalation path for anything that genuinely can't wait.</p>
+    </div>
+  </section>
+
+  <!-- ───────── THE CHANNELS ───────── -->
+  <section>
+    <h2>The <em>channels</em></h2>
+    <p>There are 12 channels, each with a specific job. The topic pinned at the top of every channel tells you exactly what belongs there. When in doubt, <strong>#p2-general</strong> is always the safe default.</p>
+
+    <table class="channel-table">
+      <thead>
+        <tr>
+          <th>Channel</th>
+          <th>What it's for</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td colspan="2" class="ch-group-label">Work — operational</td></tr>
+        <tr>
+          <td>#p0-tasks</td>
+          <td>Task completions and task-specific updates only. Drop a handoff here when a task is done. No discussions, no questions — those go in p1.</td>
+        </tr>
+        <tr>
+          <td>#p1-important</td>
+          <td>Decisions, live issues, blockers, research findings. The default channel if something needs the whole team's attention.</td>
+        </tr>
+        <tr>
+          <td>#p2-general</td>
+          <td>Everything else work-related. Half-formed ideas, quick questions, everyday team chat. If you're not sure where something goes, post it here.</td>
+        </tr>
+        <tr>
+          <td>#finance</td>
+          <td>Subscriptions, invoices, company spend. Post new costs and flag anything unrecognised here.</td>
+        </tr>
+
+        <tr><td colspan="2" class="ch-group-label">Work — reference</td></tr>
+        <tr>
+          <td>#p3-sharing</td>
+          <td>Links, articles, videos worth saving. No action expected — just share it.</td>
+        </tr>
+        <tr>
+          <td>#p4-claude-info</td>
+          <td>Long Claude outputs — research dumps, analysis, strategic write-ups. Reply in a thread on the message itself. MIRs go to #mir-reports.</td>
+        </tr>
+        <tr>
+          <td>#content</td>
+          <td>The content pipeline — show clips, caption drafts, post scheduling, YouTube, creative feedback.</td>
+        </tr>
+        <tr>
+          <td>#privacy-and-security</td>
+          <td>GDPR, data deletion, account security. Tag Aaron for anything needing technical action.</td>
+        </tr>
+
+        <tr><td colspan="2" class="ch-group-label">Meetings — output only</td></tr>
+        <tr>
+          <td>#meeting-agendas</td>
+          <td>Agendas posted before every meeting. The meeting lead follows this to run the session. Don't post anything else here.</td>
+        </tr>
+        <tr>
+          <td>#mir-reports</td>
+          <td>Meeting Intelligence Reports posted after every session. Reference only — don't extract tasks from here directly.</td>
+        </tr>
+
+        <tr><td colspan="2" class="ch-group-label">Team</td></tr>
+        <tr>
+          <td>#wins</td>
+          <td>Ticket milestones, great reviews, strong show moments, good press. Post wins here — no action needed, just signal it happened.</td>
+        </tr>
+        <tr>
+          <td>#social</td>
+          <td>Not work. Memes, things you saw, off-topic chat. If there's a business angle to it, it goes in p3-sharing instead.</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ───────── HOW SLACK CONNECTS TO CLAUDE ───────── -->
+  <section>
+    <h2>How Slack connects to <em>Claude</em></h2>
+    <p>Several channels feed directly into the AI system. What gets posted in them isn't just communication — it's part of the record Claude uses to stay up to date.</p>
+
+    <p><strong>The meeting channels.</strong> Before every meeting, the agenda is posted in <strong>#meeting-agendas</strong> — the meeting lead uses it to run the session, and everyone should read it before joining. After every meeting, a Meeting Intelligence Report is posted in <strong>#mir-reports</strong> — a structured summary of what was discussed, decided, and actioned. These reports are one of the primary sources Claude uses to update the project files. <em>See the <a href="https://epic-comedy-berlin.github.io/ecb-internal/meeting-agendas-guide.html" style="color:var(--blue);">Meeting Agendas guide</a> and <a href="https://epic-comedy-berlin.github.io/ecb-internal/mir-guide.html" style="color:var(--blue);">MIR guide</a> for the full process.</em></p>
+
+    <p><strong>The log update scan.</strong> When Claude runs a log update — the process that keeps the task files accurate — it scans <strong>all Slack channels</strong> as source material, with different priority levels per channel. #p0-tasks and #p1-important are scanned at the highest priority. #p2-general is checked for anything misposted. #mir-reports and #p4-claude-info are used as reference. This means what gets posted anywhere in Slack can feed into the project files — which is why posting in the right channel matters.</p>
+
+    <p><strong>The Claude output channel.</strong> When Claude produces long research or strategic analysis, the output gets posted in <strong>#p4-claude-info</strong> for the team to read. Reactions and discussion should stay as a <strong>thread reply on that specific message</strong> rather than being posted as a new message elsewhere. Any decisions that come out of those discussions get captured in the next log update.</p>
+  </section>
+
+  <!-- ───────── HOW TO USE SLACK ───────── -->
+  <section>
+    <h2>How Slack <em>actually works</em></h2>
+    <p>Most people start using Slack like a group chat — posting messages into a channel and replying in the same stream. That works for a while, but it gets hard to follow quickly. Here's how to use it in a way that keeps things readable.</p>
+
+    <div class="howto-block">
+      <div class="howto-header">
+        <div class="howto-title">Set up your profile</div>
+        <div class="howto-tag">Do this first</div>
+      </div>
+      <div class="howto-body">
+        <p>Before anything else, set up your profile so the team and the AI system know who's who. Click your avatar in the top right → <strong>Profile</strong> → <strong>Edit</strong>.</p>
+        <p>Set three things: a <strong>profile photo</strong> (a clear photo of your face, not a logo or avatar), your <strong>real name</strong> as the display name, and your <strong>role</strong> in the title field — e.g. "Production &amp; Tech", "Strategy", "Marketing &amp; Host".</p>
+        <p>This matters more than it looks. Consistent real names mean messages, mentions, and meeting transcripts all attribute correctly — when Claude processes a transcript or scans Slack, it needs to know who said what. A photo makes channels easier to scan at a glance.</p>
+      </div>
+    </div>
+
+    <div class="howto-block">
+      <div class="howto-header">
+        <div class="howto-title">Messages and threads</div>
+        <div class="howto-tag">The most important thing to understand</div>
+      </div>
+      <div class="howto-body">
+        <p>Every message in a channel can start a thread. When you want to <strong>reply to a specific message</strong> — rather than post a new standalone message — hover over it and click <strong>Reply in thread</strong>. Your reply gets attached to that message and keeps the main channel clean.</p>
+        <p>Think of the channel as the noticeboard and threads as the conversations that branch off each post. Without threads, a channel with lots of replies becomes one long stream that's hard to follow. With threads, each conversation stays grouped together.</p>
+        <p><em>Post in the channel</em> when sharing something new everyone should see.<br><em>Reply in thread</em> when responding to something specific already posted. In Slack, "Reply in thread" and "Reply" mean the same thing — both open the thread attached to that message. The important thing is using it rather than posting a fresh message in the channel.</p>
+        <p>You can also format messages for clarity — <strong>*asterisks*</strong> make text bold, <strong>_underscores_</strong> make it italic, and you can add bullet points or numbered lists. Useful when a message has a few distinct points rather than one line.</p>
+
+        <!-- Thread mockup -->
+        <div style="margin: 18px 0; background: #f8f9fa; border-radius: 8px; overflow: hidden; border: 1px solid #e0e0e0; font-family: 'Inter', sans-serif; font-size: 13px;">
+          <!-- Channel message -->
+          <div style="padding: 14px 16px; border-bottom: 1px solid #e8e8e8;">
+            <div style="display:flex; align-items:flex-start; gap:10px;">
+              <div style="width:32px; height:32px; border-radius:6px; background:#611f69; flex-shrink:0; display:flex; align-items:center; justify-content:center; color:#fff; font-weight:600; font-size:13px;">O</div>
+              <div>
+                <div style="display:flex; align-items:baseline; gap:8px; margin-bottom:4px;">
+                  <span style="font-weight:600; color:#1a1a1a; font-size:13.5px;">Ori</span>
+                  <span style="color:#aaa; font-size:11px;">11:42 AM</span>
+                </div>
+                <div style="color:#333; line-height:1.5;">Just confirmed the Zosch booking for next Friday — we're on.</div>
+                <div style="margin-top:8px; display:flex; align-items:center; gap:6px;">
+                  <span style="background:#f0eeff; border:1px solid #d4c8f5; border-radius:12px; padding:2px 8px; font-size:12px; color:#611f69;">👍 2</span>
+                  <span style="color:#611f69; font-size:12px; font-weight:500; cursor:pointer; padding: 2px 8px; border-radius:4px; background: #f0eeff; border: 1px solid #d4c8f5;">Reply in thread</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Thread replies -->
+          <div style="background:#fafafa; padding: 10px 16px 10px 58px; border-left: 3px solid #611f69;">
+            <div style="font-family:'JetBrains Mono',monospace; font-size:9px; letter-spacing:0.12em; text-transform:uppercase; color:#aaa; margin-bottom:10px;">2 replies in thread</div>
+            <div style="display:flex; align-items:flex-start; gap:8px; margin-bottom:10px;">
+              <div style="width:24px; height:24px; border-radius:5px; background:#3a6e8f; flex-shrink:0; display:flex; align-items:center; justify-content:center; color:#fff; font-weight:600; font-size:11px;">B</div>
+              <div>
+                <div style="display:flex; align-items:baseline; gap:6px; margin-bottom:3px;">
+                  <span style="font-weight:600; color:#1a1a1a; font-size:12.5px;">Brendan</span>
+                  <span style="color:#aaa; font-size:11px;">11:45 AM</span>
+                </div>
+                <div style="color:#555; font-size:12.5px;">What time does load-in start?</div>
+              </div>
+            </div>
+            <div style="display:flex; align-items:flex-start; gap:8px;">
+              <div style="width:24px; height:24px; border-radius:5px; background:#611f69; flex-shrink:0; display:flex; align-items:center; justify-content:center; color:#fff; font-weight:600; font-size:11px;">O</div>
+              <div>
+                <div style="display:flex; align-items:baseline; gap:6px; margin-bottom:3px;">
+                  <span style="font-weight:600; color:#1a1a1a; font-size:12.5px;">Ori</span>
+                  <span style="color:#aaa; font-size:11px;">11:47 AM</span>
+                </div>
+                <div style="color:#555; font-size:12.5px;">7pm. Sound check at 7:30.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p style="font-size:13px; color:var(--mid); margin-top:4px;">The main channel shows the original message. The follow-up questions stay in the thread — visible to anyone who needs them, out of the way for everyone else.</p>
+      </div>
+    </div>
+
+    <div class="howto-block">
+      <div class="howto-header">
+        <div class="howto-title">@ mentions</div>
+        <div class="howto-tag">Getting someone's attention directly</div>
+      </div>
+      <div class="howto-body">
+        <p>Typing <strong>@name</strong> in a message sends that person a direct notification regardless of their channel settings. Use it when something specifically needs their attention rather than the whole team's.</p>
+        <p><strong>@here</strong> notifies everyone currently active in the channel. <strong>@channel</strong> notifies all members whether they're online or not. Use both sparingly — they interrupt everyone. Reserve @channel for something genuinely urgent that the whole team needs to see immediately.</p>
+      </div>
+    </div>
+
+    <div class="howto-block">
+      <div class="howto-header">
+        <div class="howto-title">Reactions</div>
+        <div class="howto-tag">Acknowledging without adding noise</div>
+      </div>
+      <div class="howto-body">
+        <p>Hover over any message and click the smiley face icon to add an emoji reaction. A 👍 or ✅ tells someone you've seen their message and you're across it — without creating a new notification or cluttering the channel with "ok", "got it", "sounds good" replies.</p>
+        <p>This is especially useful in #p0-tasks and #p1-important — a ✅ reaction on a task completion means "acknowledged" without any back-and-forth.</p>
+      </div>
+    </div>
+
+    <div class="howto-block">
+      <div class="howto-header">
+        <div class="howto-title">Sharing files</div>
+        <div class="howto-tag">Clips, invoices, documents</div>
+      </div>
+      <div class="howto-body">
+        <p>To share a file — a clip, an invoice, a screenshot, a document — either <strong>drag it straight into the message box</strong>, or click the <strong>+</strong> icon to the left of where you type and choose <strong>Upload from your computer</strong>. Add a short note saying what it is before you send, so people know what they're looking at.</p>
+        <p>Post files in the channel they belong to — clips in #content, invoices in #finance, reports in #p4-claude-info. A file dropped in the right channel with a one-line description is easy to find later; one dropped in the wrong channel with no context gets lost.</p>
+      </div>
+    </div>
+
+    <div class="howto-block">
+      <div class="howto-header">
+        <div class="howto-title">Direct messages</div>
+        <div class="howto-tag">Use with care</div>
+      </div>
+      <div class="howto-body">
+        <p>You can send a private message directly to another team member by clicking their name or using the <strong>New message</strong> button. DMs are useful for genuinely private conversations — personal matters, sensitive feedback, or something that only concerns one person.</p>
+        <p>For everything else, <strong>prefer public channels</strong>. Decisions or information shared in DMs disappear from the team record — Claude can't scan them, they don't feed into the log update, and the rest of the team has no visibility. If something is work-related, it almost always belongs in a channel.</p>
+      </div>
+    </div>
+
+    <div class="howto-block">
+      <div class="howto-header">
+        <div class="howto-title">Voice messages</div>
+        <div class="howto-tag">Use sparingly</div>
+      </div>
+      <div class="howto-body">
+        <p>Slack lets you record and send voice notes using the microphone icon in the message bar. However, the ECB team is on the free plan which doesn't include transcription — meaning <strong>Claude can't read or process voice messages</strong>. Anything said in a voice note won't be picked up by the AI system.</p>
+        <p>As a team norm, <strong>default to text</strong>. Voice messages are only appropriate for quick, informal exchanges that don't need to be captured — or when tone of voice genuinely matters and a text message risks being misread. For anything that needs to be on record or actioned later, write it out.</p>
+      </div>
+    </div>
+
+    <div class="howto-block">
+      <div class="howto-header">
+        <div class="howto-title">Finding and fixing things</div>
+        <div class="howto-tag">Search, edit, delete</div>
+      </div>
+      <div class="howto-body">
+        <p><strong>Search.</strong> The search bar at the top of Slack finds any past message, link, or file across every channel you're in. Useful for digging up a decision someone made, a link that was shared, or a past conversation — far faster than scrolling. You can narrow a search to a specific channel or person using the filters that appear.</p>
+        <p><strong>Editing and deleting.</strong> To fix a typo or remove something you posted by mistake, hover over your own message, click the three dots, and choose <strong>Edit message</strong> or <strong>Delete message</strong>. Editing keeps the channel accurate; deleting clears genuine mistakes so they don't confuse anyone later.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────── NOTIFICATIONS ───────── -->
+  <section>
+    <h2>Setting up <em>notifications</em></h2>
+    <p class="lead">The default Slack notification settings ping you for every message in every channel. That's too much. Here's how to set it up so you only hear about things that actually need your attention.</p>
+
+    <h3>How to get there</h3>
+
+    <div class="notif-path">
+      <span class="pill">Click your avatar / name</span>
+      <span class="arrow">→</span>
+      <span class="pill">Preferences</span>
+      <span class="arrow">→</span>
+      <span class="pill">Notifications</span>
+    </div>
+    <p>On mobile: tap the <strong>You</strong> tab → <strong>Notifications</strong>. Desktop and mobile settings are separate — set both.</p>
+
+    <h3 style="margin-top: 32px;">Recommended settings</h3>
+
+    <div class="settings-grid">
+      <div class="settings-card">
+        <div class="settings-title">Notify me about</div>
+        <p>Set to <strong>Direct messages, mentions &amp; keywords</strong>. You'll only be notified when someone directly needs you — not every message in every channel.</p>
+      </div>
+      <div class="settings-card blue">
+        <div class="settings-title">Do Not Disturb</div>
+        <p>Turn this on and set your quiet hours. A good starting point is <strong>10pm – 8am</strong>. Adjust to suit your schedule. Anything sent after 10pm can wait until morning.</p>
+      </div>
+      <div class="settings-card green">
+        <div class="settings-title">Per-channel overrides</div>
+        <p>For channels you want to watch more closely, open the channel → click the channel name at the top → <strong>Notifications</strong> → set to <strong>All new messages</strong> for that channel only.</p>
+      </div>
+      <div class="settings-card">
+        <div class="settings-title">Muting channels</div>
+        <p>If a channel generates too much noise, mute it rather than leaving. Right-click the channel name → <strong>Mute channel</strong>. You'll still see messages when you open it — you just won't get notified.</p>
+      </div>
+    </div>
+
+    <div class="callout warning">
+      <div class="callout-label">Don't forget mobile</div>
+      <p>Desktop and mobile notification settings don't sync. If you only update one, your phone will still ping you when your laptop is silent. Set both to the same schedule.</p>
+    </div>
+  </section>
+
+  <!-- ───────── STAYING ON TOP OF IT ───────── -->
+  <section>
+    <h2>Staying on top of <em>Slack</em></h2>
+
+    <h3>Reading the sidebar</h3>
+
+    <div class="sidebar-demo">
+      <div class="fake-sidebar">
+        <div class="fs-workspace">Epic Comedy Berlin</div>
+        <div class="fs-section">Channels</div>
+        <div class="fs-item unread"><span class="hash">#</span> content</div>
+        <div class="fs-item unread"><span class="hash">#</span> finance</div>
+        <div class="fs-item"><span class="hash">#</span> meeting-agendas</div>
+        <div class="fs-item"><span class="hash">#</span> mir-reports</div>
+        <div class="fs-item unread"><span class="hash">#</span> p0-tasks <span class="badge">1</span></div>
+        <div class="fs-item active unread"><span class="hash">#</span> p1-important <span class="badge">3</span></div>
+        <div class="fs-item unread"><span class="hash">#</span> p2-general</div>
+        <div class="fs-item"><span class="hash">#</span> p3-sharing</div>
+        <div class="fs-item"><span class="hash">#</span> p4-claude-info</div>
+        <div class="fs-item"><span class="hash">#</span> privacy-and-security</div>
+        <div class="fs-item"><span class="hash">#</span> social</div>
+        <div class="fs-item"><span class="hash">#</span> wins</div>
+      </div>
+      <div class="sidebar-note">
+        <p><strong>Bold channels</strong> have unread messages. <strong>Red badges</strong> mean you've been directly mentioned — those need attention first.</p>
+        <p>The sidebar is alphabetical. When you open Slack, scan for bold channels and work through them by priority — p0 and p1 first, then the rest as time allows.</p>
+        <p>Channels with no bold text have nothing new — you don't need to open them.</p>
+        <p>To clear a channel without opening it, right-click the channel name → <strong>Mark as read</strong>.</p>
+      </div>
+    </div>
+
+    <div class="callout tip">
+      <div class="callout-label">Before every meeting</div>
+      <p>Check <strong>#meeting-agendas</strong> before joining any team session. The agenda is posted there beforehand and the meeting lead uses it to run the session. Reading it first means you're not catching up while the meeting is already in progress.</p>
+    </div>
+  </section>
+
+  <!-- ───────── QUESTIONS ───────── -->
+  <section>
+    <h2>Questions?</h2>
+    <p>Post in <strong>#p2-general</strong> or ask Claude directly — it knows the channel structure and can tell you where something belongs.</p>
+  </section>
+
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <div>Epic Comedy Berlin · Internal use only · Slack Guide</div>
+    <div>Updated <span class="accent">June 2026</span></div>
+  </div>
+</footer>
+
+</body>
+</html>

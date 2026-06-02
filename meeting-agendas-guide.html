@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ECB Meeting Agendas Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;1,9..144,400&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0c0b0a;
+    --bg: #f5f1ea;
+    --paper: #ffffff;
+    --cream: #ece6db;
+    --gold: #b8893f;
+    --gold-soft: #d4ae6f;
+    --red: #b8453a;
+    --green: #4a7c4e;
+    --blue: #3a6e8f;
+    --ink: #1f1c18;
+    --mid: #6b645b;
+    --line: #d6cfc1;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Inter', -apple-system, sans-serif;
+    font-weight: 400;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  header {
+    background: var(--black);
+    color: var(--bg);
+    padding: 80px 56px 100px;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute;
+    top: -180px; right: -180px;
+    width: 480px; height: 480px;
+    border: 1px solid rgba(184,137,63,0.18);
+    border-radius: 50%;
+  }
+  header::after {
+    content: '';
+    position: absolute;
+    top: -80px; right: -80px;
+    width: 280px; height: 280px;
+    border: 1px solid rgba(184,137,63,0.1);
+    border-radius: 50%;
+  }
+  .header-inner { max-width: 880px; margin: 0 auto; position: relative; z-index: 1; }
+  .eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 28px;
+  }
+  header h1 {
+    font-family: 'Fraunces', serif;
+    font-weight: 400;
+    font-size: clamp(40px, 6vw, 64px);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    max-width: 720px;
+  }
+  header h1 em { font-style: italic; color: var(--gold-soft); }
+  .header-sub {
+    margin-top: 28px;
+    font-size: 15px;
+    color: rgba(245,241,234,0.55);
+    max-width: 580px;
+    line-height: 1.7;
+  }
+  .header-pointer {
+    margin-top: 32px;
+    padding: 16px 22px;
+    background: rgba(184,137,63,0.08);
+    border-left: 2px solid var(--gold);
+    color: rgba(245,241,234,0.85);
+    font-size: 14px;
+    max-width: 680px;
+  }
+  .header-pointer strong { color: var(--gold-soft); font-weight: 500; }
+
+  main { max-width: 880px; margin: -50px auto 0; padding: 0 32px 120px; position: relative; }
+  section {
+    background: var(--paper);
+    margin-bottom: 32px;
+    padding: 56px 64px;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(12,11,10,0.04), 0 12px 40px rgba(12,11,10,0.06);
+  }
+  @media (max-width: 680px) {
+    main { padding: 0 16px 80px; }
+    section { padding: 40px 28px; }
+    header { padding: 60px 24px 90px; }
+  }
+  h2 {
+    font-family: 'Fraunces', serif;
+    font-weight: 400;
+    font-size: 32px;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    margin-bottom: 28px;
+    color: var(--black);
+  }
+  h2 em { font-style: italic; color: var(--gold); }
+  h3 {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 20px;
+    margin-bottom: 12px;
+    color: var(--black);
+  }
+  p { font-size: 16px; color: var(--ink); margin-bottom: 18px; max-width: 64ch; }
+  p.lead { font-size: 18px; line-height: 1.6; }
+  strong { font-weight: 600; color: var(--black); }
+  code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    background: var(--cream);
+    padding: 2px 7px;
+    border-radius: 3px;
+    color: var(--ink);
+  }
+
+  .callout {
+    background: var(--cream);
+    border-left: 3px solid var(--gold);
+    padding: 22px 28px;
+    border-radius: 0 4px 4px 0;
+    margin: 24px 0;
+  }
+  .callout.warning { background: #faf0ec; border-left-color: var(--red); }
+  .callout.info    { background: #eef2ec; border-left-color: var(--green); }
+  .callout.tip     { background: #ecf1f5; border-left-color: var(--blue); }
+  .callout-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    line-height: 1.3;
+  }
+  .callout.warning .callout-label { color: var(--red); }
+  .callout.info    .callout-label { color: var(--green); }
+  .callout.tip     .callout-label { color: var(--blue); }
+  .callout p { margin-bottom: 10px; font-size: 15px; line-height: 1.65; max-width: none; }
+  .callout p:last-child { margin-bottom: 0; }
+
+  /* START HERE banner */
+  .starthere {
+    background: #ecf1f5;
+    border: 1px solid #cdddea;
+    border-radius: 6px;
+    padding: 18px 24px;
+    margin: 0 0 8px;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+  .starthere .sh-icon { font-size: 18px; line-height: 1.5; }
+  .starthere p { margin: 0; font-size: 14.5px; color: var(--ink); max-width: none; }
+  .starthere strong { color: var(--blue); }
+
+  /* TABLE OF CONTENTS */
+  .toc {
+    margin: 28px 0 4px;
+    background: var(--cream);
+    border-radius: 6px;
+    padding: 22px 26px;
+  }
+  .toc-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 16px;
+  }
+  .toc-links {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: repeat(3, auto);
+    grid-auto-flow: column;
+    gap: 2px 28px;
+  }
+  @media (max-width: 680px) { .toc-links { grid-template-columns: 1fr; grid-template-rows: none; grid-auto-flow: row; } }
+  .toc-links a {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    font-size: 15px;
+    color: var(--ink);
+    text-decoration: none;
+    padding: 9px 10px 9px 0;
+    border-bottom: 1px solid rgba(184,137,63,0.15);
+    transition: color 0.15s, padding-left 0.15s;
+  }
+  .toc-links a:hover { color: var(--gold); padding-left: 6px; }
+  .toc-links a .toc-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--gold);
+    flex-shrink: 0;
+    min-width: 18px;
+  }
+  .toc-links a .toc-arrow {
+    margin-left: auto;
+    color: var(--gold-soft);
+    font-size: 13px;
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+  .toc-links a:hover .toc-arrow { opacity: 1; }
+
+  .flow {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    margin: 28px 0 12px;
+  }
+  @media (max-width: 760px) { .flow { grid-template-columns: 1fr; gap: 8px; } }
+  .flow-step {
+    background: var(--cream);
+    padding: 18px 12px;
+    text-align: center;
+    position: relative;
+    border-radius: 3px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 110px;
+  }
+  .flow-step:not(:last-child)::after {
+    content: '→';
+    position: absolute;
+    right: -10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--gold);
+    font-size: 16px;
+    font-weight: 500;
+    background: var(--paper);
+    padding: 0 4px;
+    z-index: 2;
+  }
+  @media (max-width: 760px) {
+    .flow-step:not(:last-child)::after { content: '↓'; right: 50%; top: auto; bottom: -16px; transform: translateX(50%); }
+  }
+  .flow-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    color: var(--gold);
+    margin-bottom: 8px;
+    letter-spacing: 0.1em;
+  }
+  .flow-label { font-size: 13px; font-weight: 500; color: var(--ink); line-height: 1.4; }
+  .flow-sub { font-size: 11.5px; color: var(--mid); margin-top: 4px; line-height: 1.4; }
+
+  /* AT-A-GLANCE TABLE */
+  .glance {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 24px 0 8px;
+    font-size: 13.5px;
+  }
+  .glance th {
+    text-align: left;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold);
+    padding: 10px 12px;
+    border-bottom: 2px solid var(--line);
+  }
+  .glance td {
+    padding: 13px 12px;
+    border-bottom: 1px solid var(--line);
+    color: var(--ink);
+    vertical-align: top;
+    line-height: 1.45;
+  }
+  .glance tr:last-child td { border-bottom: none; }
+  .glance .g-name { font-weight: 600; white-space: nowrap; }
+  .glance .g-icon { margin-right: 6px; }
+  @media (max-width: 680px) {
+    .glance, .glance tbody, .glance tr, .glance td { display: block; width: 100%; }
+    .glance thead { display: none; }
+    .glance tr { border: 1px solid var(--line); border-radius: 5px; margin-bottom: 12px; padding: 6px 4px; }
+    .glance td { border-bottom: 1px solid var(--cream); padding: 8px 14px; }
+    .glance td::before { content: attr(data-label); display: block; font-family: 'JetBrains Mono', monospace; font-size: 8.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold); margin-bottom: 3px; }
+    .glance .g-name::before { content: ''; margin: 0; }
+  }
+
+  /* RHYTHM STRIP */
+  .rhythm {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+    margin: 26px 0 10px;
+  }
+  @media (max-width: 680px) { .rhythm { grid-template-columns: 1fr 1fr; } }
+  .rday {
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    padding: 14px 10px;
+    text-align: center;
+    background: var(--paper);
+  }
+  .rday.active { background: var(--cream); border-color: var(--gold-soft); }
+  .rday-day {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--mid);
+    margin-bottom: 8px;
+  }
+  .rday-icon { font-size: 18px; }
+  .rday-label { font-size: 11.5px; color: var(--ink); margin-top: 6px; font-weight: 500; line-height: 1.3; }
+  .rday-empty { font-size: 11px; color: var(--mid); margin-top: 6px; }
+
+  .type-card {
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    overflow: hidden;
+    margin: 20px 0;
+  }
+  .type-head {
+    background: var(--cream);
+    padding: 18px 24px;
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+  .type-icon { font-size: 22px; }
+  .type-name {
+    font-family: 'Fraunces', serif;
+    font-size: 21px;
+    font-weight: 500;
+    color: var(--black);
+  }
+  .type-meta {
+    margin-left: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--mid);
+  }
+  .type-body { padding: 22px 24px 24px; }
+  .type-body p { font-size: 14.5px; color: var(--mid); margin-bottom: 14px; line-height: 1.65; max-width: none; }
+  .type-body p:last-child { margin-bottom: 0; }
+  .type-body strong { color: var(--ink); }
+  .trigger-list {
+    background: #1a1814;
+    border-radius: 6px;
+    padding: 14px 18px;
+    margin: 14px 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px;
+    color: var(--gold-soft);
+    line-height: 1.9;
+  }
+  .trigger-list .tl-label {
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(245,241,234,0.4);
+    margin-bottom: 6px;
+  }
+  .prompt-eg {
+    background: #f0eeff;
+    border: 1px solid #d4c8f5;
+    border-radius: 6px;
+    padding: 12px 16px;
+    margin: 14px 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px;
+    color: #4a3b7a;
+    line-height: 1.6;
+  }
+  .prompt-eg .pe-label {
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #8a7ab5;
+    margin-bottom: 6px;
+    display: block;
+  }
+  .type-detail {
+    display: grid;
+    grid-template-columns: 130px 1fr;
+    gap: 4px 16px;
+    margin: 14px 0 0;
+    font-size: 13.5px;
+  }
+  .type-detail dt {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gold);
+    padding-top: 3px;
+  }
+  .type-detail dd { color: var(--ink); line-height: 1.55; }
+  @media (max-width: 680px) {
+    .type-detail { grid-template-columns: 1fr; gap: 2px 0; }
+    .type-detail dt { padding-top: 10px; }
+  }
+
+  .step-block {
+    background: var(--cream);
+    padding: 22px 26px;
+    border-radius: 4px;
+    margin: 16px 0;
+    display: grid;
+    grid-template-columns: 36px 1fr;
+    gap: 18px;
+    align-items: start;
+  }
+  .step-num {
+    font-family: 'Fraunces', serif;
+    font-size: 26px;
+    color: var(--gold);
+    line-height: 1;
+    margin-top: -2px;
+  }
+  .step-content h3 { margin-bottom: 6px; font-size: 17px; }
+  .step-content p { font-size: 14px; color: var(--mid); margin: 0 0 10px; line-height: 1.6; max-width: none; }
+  .step-content p:last-child { margin-bottom: 0; }
+  .step-content strong { color: var(--ink); }
+
+  footer {
+    background: var(--black);
+    color: rgba(245,241,234,0.4);
+    padding: 36px 56px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.05em;
+  }
+  .footer-inner {
+    max-width: 880px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .accent { color: var(--gold); }
+
+  .nav-back { max-width: 880px; margin: 0 auto; padding: 24px 32px 0; }
+  .nav-back a {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold);
+    text-decoration: none;
+    opacity: 0.7;
+    transition: opacity 0.15s;
+  }
+  .nav-back a:hover { opacity: 1; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="eyebrow">Epic Comedy Berlin · Internal Guides</div>
+    <h1>Meeting <em>Agendas</em></h1>
+    <p class="header-sub">What ECB's meeting rhythm is, what each meeting is for, and how to generate an agenda and get it into Slack before a session.</p>
+    <div class="header-pointer">
+      <strong>What this is:</strong> ECB runs on a regular rhythm of meetings, and Claude builds the agenda for every one of them — pulled from the live project files, not made up. This guide explains the rhythm first, then how to produce an agenda.
+    </div>
+  </div>
+</header>
+
+<div class="nav-back">
+  <a href="https://epic-comedy-berlin.github.io/ecb-internal/">← Back to all guides</a>
+</div>
+
+<main>
+
+  <!-- ───────── START HERE ───────── -->
+  <section>
+    <div class="starthere">
+      <span class="sh-icon">👋</span>
+      <p><strong>First time?</strong> Read this through, starting just below with <a href="#rhythm" style="color:var(--blue);">The meeting rhythm</a> so the system makes sense before the mechanics. <strong>Already know it and just need to build one?</strong> Jump straight to <a href="#generate" style="color:var(--blue);">How to generate one</a> or the <a href="#reference" style="color:var(--blue);">Meeting type reference</a>.</p>
+    </div>
+    <div class="toc">
+      <div class="toc-label">On this page</div>
+      <div class="toc-links">
+        <a href="#rhythm"><span class="toc-num">01</span>The meeting rhythm<span class="toc-arrow">→</span></a>
+        <a href="#generate"><span class="toc-num">02</span>How to generate one<span class="toc-arrow">→</span></a>
+        <a href="#reference"><span class="toc-num">03</span>Meeting type reference<span class="toc-arrow">→</span></a>
+        <a href="#mir"><span class="toc-num">04</span>The MIR at close<span class="toc-arrow">→</span></a>
+        <a href="#connects"><span class="toc-num">05</span>How it all connects<span class="toc-arrow">→</span></a>
+        <a href="#troubleshooting"><span class="toc-num">06</span>Troubleshooting<span class="toc-arrow">→</span></a>
+      </div>
+    </div>
+
+    <h2 style="margin-top: 36px;">Why ECB <em>runs on meetings</em></h2>
+    <p class="lead">A small team moving fast needs a few fixed points in the week where everyone lines up, decides things, and clears what's stuck — without constant back-and-forth in between.</p>
+    <p>That's what the meeting rhythm is for. Each meeting has a specific job, and they feed each other: what gets surfaced in one becomes the focus of the next. Claude builds every agenda from the current state of the company — open tasks, deadlines, risks, recent decisions — so each session starts from the same shared picture and nothing urgent slips through.</p>
+  </section>
+
+  <!-- ───────── THE MEETING RHYTHM ───────── -->
+  <section id="rhythm">
+    <h2>The meeting <em>rhythm</em></h2>
+    <p class="lead">ECB runs two meetings a week, every week, plus a monthly review and the occasional extra session when something needs it.</p>
+
+    <div class="rhythm">
+      <div class="rday active">
+        <div class="rday-day">Mon</div>
+        <div class="rday-icon">🗓</div>
+        <div class="rday-label">Stand-up</div>
+      </div>
+      <div class="rday">
+        <div class="rday-day">Tue</div>
+        <div class="rday-empty">—</div>
+      </div>
+      <div class="rday">
+        <div class="rday-day">Wed</div>
+        <div class="rday-empty">—</div>
+      </div>
+      <div class="rday active">
+        <div class="rday-day">Thu</div>
+        <div class="rday-icon">🗒</div>
+        <div class="rday-label">Working session</div>
+      </div>
+      <div class="rday">
+        <div class="rday-day">Fri</div>
+        <div class="rday-empty">shows</div>
+      </div>
+    </div>
+    <p style="font-size: 13.5px; color: var(--mid); margin-top: 4px;">The <strong>last Thursday of each month</strong>, the working session is replaced by the monthly review. An <strong>ad hoc session</strong> can be called any time something can't wait for Thursday — or when Thursday needs more room.</p>
+
+    <h3 style="margin-top: 36px;">What each meeting is for</h3>
+    <p>Before the mechanics, the purpose. Each meeting does one job in the rhythm:</p>
+
+    <table class="glance">
+      <thead>
+        <tr>
+          <th>Meeting</th>
+          <th>When</th>
+          <th>What it's for</th>
+          <th>How long</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="g-name" data-label="Meeting"><span class="g-icon">🗓</span>Monday Stand-up</td>
+          <td data-label="When">Every Monday</td>
+          <td data-label="What it's for"><strong>Align and surface.</strong> Quick status from each person, flag blockers, set what Thursday will focus on. No problem-solving.</td>
+          <td data-label="How long">15 min</td>
+        </tr>
+        <tr>
+          <td class="g-name" data-label="Meeting"><span class="g-icon">🗒</span>Thursday Working</td>
+          <td data-label="When">Every Thursday</td>
+          <td data-label="What it's for"><strong>Decide and do.</strong> The main session — quick wins, then the priority decisions and work that move the company.</td>
+          <td data-label="How long">3–5 hrs</td>
+        </tr>
+        <tr>
+          <td class="g-name" data-label="Meeting"><span class="g-icon">📅</span>Monthly Review</td>
+          <td data-label="When">Last Thursday of month</td>
+          <td data-label="What it's for"><strong>Review and clear.</strong> Clean up the task list, promote and cull, agree one process improvement. Replaces that week's working session.</td>
+          <td data-label="How long">3–5 hrs</td>
+        </tr>
+        <tr>
+          <td class="g-name" data-label="Meeting"><span class="g-icon">⚡</span>Ad Hoc</td>
+          <td data-label="When">As needed</td>
+          <td data-label="What it's for"><strong>Overflow or urgency.</strong> A focused extra session for something that can't wait, or when there's more to work through than a Thursday holds.</td>
+          <td data-label="How long">2–5 hrs</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="callout">
+      <div class="callout-label">The loop</div>
+      <p>The meetings aren't standalone — they form a cycle. Monday sets Thursday's focus. Every meeting ends with a written report (an MIR) that records what happened, and that report feeds the next agenda. The full loop is covered further down in <a href="#connects" style="color:var(--blue);">How it all connects</a>.</p>
+    </div>
+  </section>
+
+  <!-- ───────── HOW TO GENERATE ───────── -->
+  <section id="generate">
+    <h2>How to <em>generate one</em></h2>
+    <p class="lead">Same process for all four types. The difference is the meeting type and how much detail you give up front.</p>
+
+    <div class="callout info">
+      <div class="callout-label">Whose job this is</div>
+      <p>The <strong>meeting lead generates the agenda</strong> for their meeting. If you're unsure how, <strong>Aaron can generate it</strong> — or you can ask Aaron to build it for you. Better to ask than to send a broken or half-built agenda.</p>
+    </div>
+
+    <div class="flow">
+      <div class="flow-step">
+        <div class="flow-num">STEP 1</div>
+        <div class="flow-label">Open a new chat</div>
+        <div class="flow-sub">In the ECB project</div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">STEP 2</div>
+        <div class="flow-label">Type the request</div>
+        <div class="flow-sub">Type + details up front</div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">STEP 3</div>
+        <div class="flow-label">Claude builds it</div>
+        <div class="flow-sub">From the live files</div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">STEP 4</div>
+        <div class="flow-label">Confirm + post</div>
+        <div class="flow-sub">Into #meeting-agendas</div>
+      </div>
+    </div>
+
+    <div class="step-block">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <h3>Open a new chat in the ECB project</h3>
+        <p>Start a fresh chat. One agenda per chat — don't reuse an old one.</p>
+      </div>
+    </div>
+
+    <div class="step-block">
+      <div class="step-num">2</div>
+      <div class="step-content">
+        <h3>Check connectors and model</h3>
+        <p>The build needs Slack (via Zapier) on to post, and may use <a href="https://epic-comedy-berlin.github.io/ecb-internal/fireflies-guide.html" style="color:var(--blue);">Fireflies</a> for the Thursday and ad hoc types. Turn the needed ones on, and off again after. Sonnet is fine — you don't need Opus.</p>
+      </div>
+    </div>
+
+    <div class="step-block">
+      <div class="step-num">3</div>
+      <div class="step-content">
+        <h3>Type the request with details up front</h3>
+        <p>Give the meeting type plus the key details in one message — type, start time, and (for Thursday, monthly, ad hoc) duration. For an ad hoc session, include the focus topic. The more you give, the fewer questions Claude has to ask. Exact phrasing and examples are in the <a href="#reference" style="color:var(--blue);">Meeting type reference</a> below.</p>
+      </div>
+    </div>
+
+    <div class="step-block">
+      <div class="step-num">4</div>
+      <div class="step-content">
+        <h3>Answer anything still needed</h3>
+        <p>If you left something out, Claude asks — answer or accept the defaults. For Thursday, don't set the focus; it comes from Monday's MIR automatically. You can add extra items here too: "also put the merch decision on the agenda."</p>
+      </div>
+    </div>
+
+    <div class="step-block">
+      <div class="step-num">5</div>
+      <div class="step-content">
+        <h3>Review, then confirm the send</h3>
+        <p>Claude generates the full agenda in the chat and shows it to you first. Read it over — it's built from the live files, but a quick check confirms nothing looks off. If something's wrong, tell Claude what to change. Once you're happy, confirm and it posts the agenda to <strong>#meeting-agendas</strong>, ready for the meeting lead to run from.</p>
+      </div>
+    </div>
+
+    <div class="callout tip">
+      <div class="callout-label">Push back any time</div>
+      <p>You can correct Claude during the build — "that task is already done," "the focus should be X instead," "add the SociableKIT deadline." It adjusts. The agenda isn't locked until it's posted.</p>
+    </div>
+  </section>
+
+  <!-- ───────── MEETING TYPE REFERENCE ───────── -->
+  <section id="reference">
+    <h2>Meeting type <em>reference</em></h2>
+    <p>The detail for each type — trigger phrases, the best way to ask, and what Claude pulls from. Use this when you're actually building one.</p>
+
+    <!-- MONDAY STANDUP -->
+    <div class="type-card">
+      <div class="type-head">
+        <span class="type-icon">🗓</span>
+        <span class="type-name">Monday Stand-up</span>
+        <span class="type-meta">15 min · weekly</span>
+      </div>
+      <div class="type-body">
+        <p>A tight 15-minute status check. Each person runs through what they completed, what they're working on, and what's blocking them. No problem-solving — anything needing discussion is parked for Thursday. Claude pre-populates flags so the meeting lead can raise them directly rather than waiting for the team to surface them.</p>
+        <div class="trigger-list">
+          <div class="tl-label">Trigger phrases — any of these</div>
+          "Monday stand-up agenda" · "Stand-up agenda" · "Give me the stand-up" · "Agenda for Monday"
+        </div>
+        <div class="prompt-eg">
+          <span class="pe-label">Best way to ask — type + time is all you need</span>
+          Monday stand-up agenda for 16:00
+        </div>
+        <dl class="type-detail">
+          <dt>Give it</dt>
+          <dd>Meeting type and start time. That's all. (Defaults to 16:00 if you skip the time.)</dd>
+          <dt>Pulls from</dt>
+          <dd>Active State — current P1 tasks per person, plus a scan across all tasks for blockers, approaching deadlines, overdue items, and high risks</dd>
+          <dt>Surfaces</dt>
+          <dd>Thursday's focus for the team to confirm. The Monday MIR is what records it and carries it to Thursday — see <a href="#connects" style="color:var(--blue);">How it all connects</a>.</dd>
+        </dl>
+      </div>
+    </div>
+
+    <!-- THURSDAY -->
+    <div class="type-card">
+      <div class="type-head">
+        <span class="type-icon">🗒</span>
+        <span class="type-name">Thursday Working Meeting</span>
+        <span class="type-meta">3–5 hours · weekly</span>
+      </div>
+      <div class="type-body">
+        <p>The main working session of the week. Opens with quick wins and a task run-through, then moves into the priority agenda — the decisions and discussions that move the company. Focus items come automatically from the most recent Monday stand-up's MIR, so Thursday picks up exactly where Monday left off.</p>
+        <div class="trigger-list">
+          <div class="tl-label">Trigger phrases — any of these</div>
+          "Thursday meeting agenda" · "Work meeting agenda" · "Thursday agenda" · "Generate agenda" · "Build agenda"
+        </div>
+        <div class="prompt-eg">
+          <span class="pe-label">Best way to ask — type, time, duration</span>
+          Thursday agenda for 16:00, 4 hours
+        </div>
+        <dl class="type-detail">
+          <dt>Give it</dt>
+          <dd>Meeting type, start time, duration. Standard defaults (16:00, 4 hours, no body-double block) are usually fine — say "standard" or skip them.</dd>
+          <dt>Pulls from</dt>
+          <dd>Monday's MIR, Active State, Slack, Fireflies — the full picture</dd>
+          <dt>Focus</dt>
+          <dd>Comes from the Monday MIR automatically — you don't set it. But you <strong>can add extra items</strong>: say "also add [X]" in your message or mid-build.</dd>
+        </dl>
+      </div>
+    </div>
+
+    <!-- MONTHLY -->
+    <div class="type-card">
+      <div class="type-head">
+        <span class="type-icon">📅</span>
+        <span class="type-name">Monthly Review</span>
+        <span class="type-meta">3–5 hours · monthly</span>
+      </div>
+      <div class="type-body">
+        <p>Replaces the last Thursday working meeting of the month. A review and clean-up of the whole task list — the team clears overdue and flagged items, promotes the right P2 tasks into P1, culls stale P3/P4 tasks, and agrees one process improvement for next month. It runs long (3–5 hours) because going through the full task list properly is a big job. Keeps the list from silting up.</p>
+        <div class="trigger-list">
+          <div class="tl-label">Trigger phrases — any of these</div>
+          "Monthly review agenda" · "End of month agenda" · "Monthly agenda"
+        </div>
+        <div class="prompt-eg">
+          <span class="pe-label">Best way to ask — type, time, and the date it replaces</span>
+          Monthly review agenda for 16:00, replacing Thursday 26 June
+        </div>
+        <dl class="type-detail">
+          <dt>Give it</dt>
+          <dd>Meeting type, start time, duration, and confirm the date it replaces the last Thursday meeting (defaults: 16:00, 4 hours)</dd>
+          <dt>Pulls from</dt>
+          <dd>Full task list (P1–P4), the month's MIRs, Master Context targets</dd>
+          <dt>Produces</dt>
+          <dd>Promotions, archives, and one committed process improvement with an owner and deadline</dd>
+        </dl>
+      </div>
+    </div>
+
+    <!-- AD HOC -->
+    <div class="type-card">
+      <div class="type-head">
+        <span class="type-icon">⚡</span>
+        <span class="type-name">Ad Hoc Session</span>
+        <span class="type-meta">2–5 hours · as needed</span>
+      </div>
+      <div class="type-body">
+        <p>An extra session outside the normal cadence. Called when something urgent can't wait until Thursday, <strong>or</strong> when there's more to work through than a single Thursday can hold and the team needs additional time for specific tasks. Built around one or two named focus items — not a general catch-up. You provide the focus; Claude builds the session around it and surfaces related flags so nothing gets missed.</p>
+        <div class="trigger-list">
+          <div class="tl-label">Trigger phrases — any of these</div>
+          "Ad hoc agenda" · "Emergency meeting agenda" · "Quick meeting agenda" · "Agenda for [topic]"
+        </div>
+        <div class="prompt-eg">
+          <span class="pe-label">Best way to ask — give everything up front</span>
+          Ad hoc agenda for today at 14:00, 2 hours, focusing on the ticketing rollout and the merch supplier decision
+        </div>
+        <dl class="type-detail">
+          <dt>Give it</dt>
+          <dd>Meeting type, start time, duration, <strong>and the focus topic</strong>. Duration defaults to 2 hours if you skip it. The focus is required — Claude won't build a generic ad hoc agenda without it.</dd>
+          <dt>Pulls from</dt>
+          <dd>Your focus topic first, then Active State, recent MIRs, Slack, Fireflies for context</dd>
+          <dt>Attendees</dt>
+          <dd>Defaults to all three. Say who's needed if it's only some people.</dd>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────── THE MIR AT CLOSE ───────── -->
+  <section id="mir">
+    <h2>Every meeting ends with an <em>MIR</em></h2>
+    <p class="lead">The agenda gets you into the meeting. The MIR is how the meeting gets captured — and it doesn't happen automatically. Someone has to generate it.</p>
+    <p>At the close of every meeting, the meeting lead triggers a Meeting Intelligence Report. Claude pulls the meeting's Fireflies transcript, builds the MIR, and posts it to <strong>#mir-reports</strong>. This is the step that records every decision, task, and flag from the session — and it's the input the next agenda and the project files depend on. <em>See the <a href="https://epic-comedy-berlin.github.io/ecb-internal/mir-guide.html" style="color:var(--blue);">MIR guide</a> for that process, and the <a href="https://epic-comedy-berlin.github.io/ecb-internal/slack-guide.html" style="color:var(--blue);">Slack guide</a> for the channels.</em></p>
+
+    <div class="callout warning">
+      <div class="callout-label">Don't skip this</div>
+      <p>If the MIR isn't generated, the meeting effectively vanishes from the system. The Thursday agenda won't have its focus, decisions won't reach the project files, and the next log update has nothing to pull. Generating the MIR at close is not optional. <em>See the <a href="https://epic-comedy-berlin.github.io/ecb-internal/mir-guide.html" style="color:var(--blue);">MIR guide</a> for exactly how.</em></p>
+    </div>
+
+    <h3 style="margin-top: 28px;">Then the log update</h3>
+    <p>After the MIR is posted, the project files get refreshed with a log update — which scans the MIR, Slack, and transcripts and folds everything into Active State and the Decision Archive. <strong>The order matters: MIR first, then log update.</strong> Running the log update before the MIR means it misses the meeting's own output. This happens after <em>every</em> meeting, not just Thursdays. <em>See the <a href="https://epic-comedy-berlin.github.io/ecb-internal/log-tracker-guide.html" style="color:var(--blue);">Log Tracker guide</a> for how.</em></p>
+  </section>
+
+  <!-- ───────── HOW IT CONNECTS ───────── -->
+  <section id="connects">
+    <h2>How it all <em>connects</em></h2>
+    <p>The agenda system is one link in a loop that keeps the company in sync. Each meeting's output becomes the next meeting's input.</p>
+
+    <p><strong>Monday feeds Thursday.</strong> When the Monday stand-up wraps and its MIR is generated, the MIR captures a "Thursday agenda items" block. The Thursday agenda pulls directly from that — so what gets parked on Monday automatically becomes Thursday's focus. You don't manually carry anything over.</p>
+
+    <div class="callout">
+      <div class="callout-label">The cycle</div>
+      <p>Monday stand-up → MIR (records Thursday focus) → log update → Thursday agenda → Thursday MIR → log update → next Monday's agenda. Every meeting produces an MIR, and every MIR is followed by a log update that keeps the files current for the next agenda.</p>
+    </div>
+  </section>
+
+  <!-- ───────── TROUBLESHOOTING ───────── -->
+  <section id="troubleshooting">
+    <h2>If something <em>goes wrong</em></h2>
+
+    <div class="callout warning">
+      <div class="callout-label">The agenda didn't post to Slack</div>
+      <p>Check that the Slack connector (via Zapier) was turned on before generating. If it was off, turn it on and ask Claude to send the agenda to #meeting-agendas. If Claude reports an error sending rather than posting cleanly, flag it to Aaron in #p1-important.</p>
+    </div>
+
+    <div class="callout warning">
+      <div class="callout-label">The Thursday agenda has no focus items</div>
+      <p>This usually means there's no recent Monday MIR for Claude to pull from — either the stand-up didn't happen or its MIR wasn't generated. If the stand-up happened but the MIR was missed, <strong>go and generate the MIR for that meeting first</strong>, then rebuild the Thursday agenda — it'll pick up the focus. <em>The <a href="https://epic-comedy-berlin.github.io/ecb-internal/mir-guide.html" style="color:var(--blue);">MIR guide</a> covers how to generate one for a past meeting.</em> If the stand-up genuinely didn't happen, just tell Claude what the focus should be when it asks.</p>
+    </div>
+
+    <div class="callout warning">
+      <div class="callout-label">The agenda looks out of date</div>
+      <p>The agenda is only as current as the project files. If tasks or decisions look stale, the files need a log update before the agenda will be accurate. Normally Aaron runs this — flag it to him in #p1-important. If he's unavailable and it's essential, you can run the log update yourself and replace the files in the project. <em>The <a href="https://epic-comedy-berlin.github.io/ecb-internal/log-tracker-guide.html" style="color:var(--blue);">Log Tracker guide</a> walks through how.</em></p>
+    </div>
+  </section>
+
+  <!-- ───────── QUESTIONS ───────── -->
+  <section>
+    <h2>Questions?</h2>
+    <p>For anything about the agenda system or how it connects to the rest of the system, ask Aaron in <strong>#p1-important</strong>. The MIR side of the cycle is in the <a href="https://epic-comedy-berlin.github.io/ecb-internal/mir-guide.html" style="color:var(--blue);">MIR guide</a>; the file-update side is in the <a href="https://epic-comedy-berlin.github.io/ecb-internal/log-tracker-guide.html" style="color:var(--blue);">Log Tracker guide</a>.</p>
+  </section>
+
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <div>Epic Comedy Berlin · Internal use only · Meeting Agendas Guide</div>
+    <div>Updated <span class="accent">June 2026</span></div>
+  </div>
+</footer>
+
+</body>
+</html>
